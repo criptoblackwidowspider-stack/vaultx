@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>🕷️ SPIDER INVASION</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#0a0a0a;
+  cursor:none;
+}
+
+/* INTRO */
+#intro{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:radial-gradient(ellipse at center,#1a0a0a,#000);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  z-index:10000;
+  transition:opacity 1s;
+}
+#intro.hide{opacity:0;pointer-events:none}
+
+.big-spider{
+  font-size:150px;
+  animation:pulse 0.5s infinite,shake 0.1s infinite;
+}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+@keyframes shake{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+
+.warning{
+  font-family:'Comic Sans MS',cursive;
+  font-size:36px;
+  color:#ff0000;
+  text-shadow:0 0 20px #ff0000,0 0 40px #ff0000;
+  margin-top:30px;
+  animation:blink 0.2s infinite;
+  text-align:center;
+}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0.5}}
+
+.hacker-msg{
+  font-family:'Comic Sans MS',cursive;
+  font-size:28px;
+  font-weight:bold;
+  margin-top:20px;
+  text-align:center;
+}
+.hacker-msg span{display:inline-block;animation:rainbow 0.3s infinite,blink 0.1s infinite}
+@keyframes rainbow{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}
+
+.c1{color:#FF69B4}.c2{color:#00FFFF}.c3{color:#FF1493}.c4{color:#7FFF00}.c5{color:#FF6EC7}
+.c6{color:#FFFF00}.c7{color:#FF00FF}.c8{color:#00FF7F}.c9{color:#FFA500}.c10{color:#87CEEB}
+
+.counter{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  color:#ff4444;
+  font-family:'Comic Sans MS',cursive;
+  font-size:24px;
+  text-shadow:0 0 10px #ff0000;
+  z-index:9999;
+}
+
+/* ARAÑA */
+.spider{
+  position:fixed;
+  width:40px;
+  height:40px;
+  pointer-events:none;
+  z-index:1000;
+  transition:none;
+}
+
+.spider-body{
+  position:absolute;
+  width:20px;
+  height:25px;
+  background:radial-gradient(ellipse at 30% 30%, #4a4a4a, #1a1a1a);
+  border-radius:50%;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  box-shadow:0 2px 5px rgba(0,0,0,0.5);
+}
+
+.spider-body::before{
+  content:'';
+  position:absolute;
+  width:12px;
+  height:14px;
+  background:radial-gradient(ellipse at 30% 30%, #3a3a3a, #0a0a0a);
+  border-radius:50%;
+  top:-10px;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+/* Ojos rojos */
+.spider-body::after{
+  content:'';
+  position:absolute;
+  width:8px;
+  height:4px;
+  top:-6px;
+  left:50%;
+  transform:translateX(-50%);
+  background:transparent;
+  box-shadow:
+    -3px 0 0 2px #ff0000,
+    3px 0 0 2px #ff0000;
+  border-radius:50%;
+  animation:eyeGlow 0.5s infinite;
+}
+@keyframes eyeGlow{0%,100%{opacity:1}50%{opacity:0.5}}
+
+.leg{
+  position:absolute;
+  width:25px;
+  height:2px;
+  background:linear-gradient(90deg,#2a2a2a,#1a1a1a);
+  top:50%;
+  transform-origin:0 50%;
+  border-radius:2px;
+}
+
+.leg.left{left:5px}
+.leg.right{left:35px;transform:scaleX(-1)}
+
+.leg:nth-child(1){transform:rotate(-30deg);animation:legMove1 0.15s infinite}
+.leg:nth-child(2){transform:rotate(-10deg);animation:legMove2 0.15s infinite}
+.leg:nth-child(3){transform:rotate(10deg);animation:legMove2 0.15s infinite}
+.leg:nth-child(4){transform:rotate(30deg);animation:legMove1 0.15s infinite}
+.leg:nth-child(5){transform:rotate(-30deg) scaleX(-1);animation:legMove2 0.15s infinite}
+.leg:nth-child(6){transform:rotate(-10deg) scaleX(-1);animation:legMove1 0.15s infinite}
+.leg:nth-child(7){transform:rotate(10deg) scaleX(-1);animation:legMove1 0.15s infinite}
+.leg:nth-child(8){transform:rotate(30deg) scaleX(-1);animation:legMove2 0.15s infinite}
+
+@keyframes legMove1{
+  0%,100%{transform:rotate(var(--base-angle)) translateY(-2px)}
+  50%{transform:rotate(var(--base-angle)) translateY(2px)}
+}
+@keyframes legMove2{
+  0%,100%{transform:rotate(var(--base-angle)) translateY(2px)}
+  50%{transform:rotate(var(--base-angle)) translateY(-2px)}
+}
+
+/* Variaciones de tamaño */
+.spider.small{transform:scale(0.5)}
+.spider.medium{transform:scale(0.8)}
+.spider.large{transform:scale(1.2)}
+.spider.huge{transform:scale(1.8)}
+
+/* Cursor araña */
+#cursorSpider{
+  position:fixed;
+  pointer-events:none;
+  z-index:99999;
+  font-size:30px;
+  transform:translate(-50%,-50%);
+}
+
+/* Telaraña de fondo */
+.web{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  pointer-events:none;
+  opacity:0.1;
+  z-index:1;
+}
+
+/* Efecto de comezón - screen shake */
+body.itchy{
+  animation:itch 0.05s infinite;
+}
+@keyframes itch{
+  0%{transform:translate(0,0)}
+  25%{transform:translate(-2px,1px)}
+  50%{transform:translate(2px,-1px)}
+  75%{transform:translate(-1px,-2px)}
+  100%{transform:translate(1px,2px)}
+}
+
+/* Mensaje final */
+#finalMsg{
+  position:fixed;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  font-family:'Comic Sans MS',cursive;
+  font-size:32px;
+  color:#ff0000;
+  text-shadow:0 0 30px #ff0000;
+  z-index:99999;
+  text-align:center;
+  display:none;
+  background:rgba(0,0,0,0.9);
+  padding:40px;
+  border-radius:20px;
+  border:3px solid #ff0000;
+}
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="big-spider">🕷️</div>
+  <div class="warning">⚠️ SPIDER INVASION ⚠️</div>
+  <div class="hacker-msg">
+    <span class="c1">Y</span><span class="c2">o</span><span class="c3">u</span><span class="c4">r</span> 
+    <span class="c5">s</span><span class="c6">c</span><span class="c7">r</span><span class="c8">e</span><span class="c9">e</span><span class="c10">n</span> 
+    <span class="c1">h</span><span class="c2">a</span><span class="c3">s</span> 
+    <span class="c4">b</span><span class="c5">e</span><span class="c6">e</span><span class="c7">n</span> 
+    <span class="c8">i</span><span class="c9">n</span><span class="c10">f</span><span class="c1">e</span><span class="c2">s</span><span class="c3">t</span><span class="c4">e</span><span class="c5">d</span> 
+    <span class="c6">b</span><span class="c7">y</span>
+    <br>
+    <span style="font-size:42px">
+      🕷️ <span class="c8">L</span><span class="c9">u</span><span class="c10">I</span><span class="c1">s</span> 
+      <span class="c2">B</span><span class="c3">a</span><span class="c4">Q</span><span class="c5">u</span><span class="c6">E</span> 🕷️
+    </span>
+    <br>
+    <span class="c7">t</span><span class="c8">h</span><span class="c9">e</span> 
+    <span class="c10">S</span><span class="c1">P</span><span class="c2">I</span><span class="c3">D</span><span class="c4">E</span><span class="c5">R</span> 
+    <span class="c6">K</span><span class="c7">I</span><span class="c8">N</span><span class="c9">G</span> 
+    <span style="font-size:40px">👑</span>
+  </div>
+  <div class="counter" id="counter">🕷️ Preparando invasión...</div>
+</div>
+
+<!-- Cursor araña -->
+<div id="cursorSpider">🕷️</div>
+
+<!-- Container para arañas -->
+<div id="spiderContainer"></div>
+
+<div id="finalMsg">
+  🕷️👑 TU PANTALLA HA SIDO INVADIDA 👑🕷️<br>
+  <span style="font-size:24px">by LuIs BaQuE - The Spider King</span><br>
+  <span style="font-size:60px">🕷️🕷️🕷️</span>
+</div>
+
+<script>
+const MAX_SPIDERS = 150;
+let spiders = [];
+let spiderCount = 0;
+
+// Cursor araña
+document.addEventListener('mousemove', (e) => {
+  const cursor = document.getElementById('cursorSpider');
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+
+function crearArana() {
+  const container = document.getElementById('spiderContainer');
+  
+  const spider = document.createElement('div');
+  spider.className = 'spider';
+  
+  // Tamaño aleatorio
+  const sizes = ['small', 'small', 'medium', 'medium', 'medium', 'large', 'huge'];
+  spider.classList.add(sizes[Math.floor(Math.random() * sizes.length)]);
+  
+  // Posición inicial desde los bordes
+  const side = Math.floor(Math.random() * 4);
+  let x, y;
+  switch(side) {
+    case 0: x = Math.random() * window.innerWidth; y = -50; break;
+    case 1: x = window.innerWidth + 50; y = Math.random() * window.innerHeight; break;
+    case 2: x = Math.random() * window.innerWidth; y = window.innerHeight + 50; break;
+    case 3: x = -50; y = Math.random() * window.innerHeight; break;
+  }
+  
+  spider.style.left = x + 'px';
+  spider.style.top = y + 'px';
+  
+  // Estructura de la araña
+  spider.innerHTML = `
+    <div class="spider-body"></div>
+    <div class="leg left" style="--base-angle:-30deg"></div>
+    <div class="leg left" style="--base-angle:-10deg"></div>
+    <div class="leg left" style="--base-angle:10deg"></div>
+    <div class="leg left" style="--base-angle:30deg"></div>
+    <div class="leg right" style="--base-angle:-30deg"></div>
+    <div class="leg right" style="--base-angle:-10deg"></div>
+    <div class="leg right" style="--base-angle:10deg"></div>
+    <div class="leg right" style="--base-angle:30deg"></div>
+  `;
+  
+  container.appendChild(spider);
+  
+  // Datos de movimiento
+  const spiderData = {
+    element: spider,
+    x: x,
+    y: y,
+    angle: Math.random() * 360,
+    speed: 1 + Math.random() * 3,
+    turnSpeed: (Math.random() - 0.5) * 5,
+    nextTurn: Date.now() + Math.random() * 2000
+  };
+  
+  spiders.push(spiderData);
+  return spiderData;
+}
+
+function moverAranas() {
+  const now = Date.now();
+  
+  spiders.forEach(spider => {
+    // Cambiar dirección aleatoriamente
+    if (now > spider.nextTurn) {
+      spider.turnSpeed = (Math.random() - 0.5) * 8;
+      spider.speed = 1 + Math.random() * 4;
+      spider.nextTurn = now + 500 + Math.random() * 2000;
+    }
+    
+    // Actualizar ángulo
+    spider.angle += spider.turnSpeed;
+    
+    // Mover
+    const rad = spider.angle * Math.PI / 180;
+    spider.x += Math.cos(rad) * spider.speed;
+    spider.y += Math.sin(rad) * spider.speed;
+    
+    // Rebotar en bordes
+    if (spider.x < -20) { spider.x = -20; spider.angle = 180 - spider.angle; }
+    if (spider.x > window.innerWidth + 20) { spider.x = window.innerWidth + 20; spider.angle = 180 - spider.angle; }
+    if (spider.y < -20) { spider.y = -20; spider.angle = -spider.angle; }
+    if (spider.y > window.innerHeight + 20) { spider.y = window.innerHeight + 20; spider.angle = -spider.angle; }
+    
+    // Aplicar posición y rotación
+    spider.element.style.left = spider.x + 'px';
+    spider.element.style.top = spider.y + 'px';
+    spider.element.style.transform = `rotate(${spider.angle + 90}deg) ${spider.element.classList.contains('small') ? 'scale(0.5)' : spider.element.classList.contains('large') ? 'scale(1.2)' : spider.element.classList.contains('huge') ? 'scale(1.8)' : 'scale(0.8)'}`;
+  });
+  
+  requestAnimationFrame(moverAranas);
+}
+
+function invasion() {
+  const counter = document.getElementById('counter');
+  
+  function agregarArana() {
+    if (spiderCount >= MAX_SPIDERS) {
+      counter.innerHTML = '🕷️ ¡' + MAX_SPIDERS + ' ARAÑAS INVADIERON! 🕷️';
+      document.body.classList.add('itchy');
+      setTimeout(() => {
+        document.getElementById('finalMsg').style.display = 'block';
+      }, 1000);
+      return;
+    }
+    
+    crearArana();
+    spiderCount++;
+    counter.innerHTML = '🕷️ Arañas: ' + spiderCount + ' / ' + MAX_SPIDERS;
+    
+    // Velocidad de aparición aumenta
+    const delay = Math.max(20, 100 - spiderCount);
+    setTimeout(agregarArana, delay);
+  }
+  
+  agregarArana();
+  moverAranas();
+}
+
+// AUTO-EJECUTAR
+window.onload = function() {
+  const intro = document.getElementById('intro');
+  
+  // Ocultar intro y comenzar invasión
+  setTimeout(() => {
+    intro.classList.add('hide');
+    invasion();
+  }, 3000);
+};
+</script>
+</body>
+</html>
