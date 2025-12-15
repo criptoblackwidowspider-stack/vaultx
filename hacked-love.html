@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>💘 HACKED</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  min-height:100vh;
+  background:radial-gradient(ellipse at center,#2d0a1a,#0a0a0a);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  font-family:Georgia,serif;
+  overflow:hidden;
+}
+.heart{
+  position:relative;
+  width:150px;
+  height:140px;
+  filter:drop-shadow(0 0 20px rgba(255,50,50,0.3));
+  transition:all 0.5s;
+}
+.heart::before,.heart::after{
+  content:'';
+  position:absolute;
+  top:0;
+  width:75px;
+  height:120px;
+  background:linear-gradient(180deg,#ff4466,#cc2244,#991133);
+  border-radius:75px 75px 0 0;
+  transition:all 0.5s;
+}
+.heart::before{left:75px;transform:rotate(-45deg);transform-origin:0 100%}
+.heart::after{left:0;transform:rotate(45deg);transform-origin:100% 100%}
+.heart.big{
+  transform:scale(1.6);
+  filter:drop-shadow(0 0 80px rgba(255,0,50,0.9));
+}
+.heart.big::before,.heart.big::after{
+  background:linear-gradient(180deg,#ff0033,#ff0044,#cc0022);
+}
+.arrow{
+  position:absolute;
+  left:-300px;
+  width:400px;
+  height:4px;
+  transition:left 0.8s ease-out;
+}
+.arrow.go{left:50px}
+.arrow-shaft{width:100%;height:4px;background:linear-gradient(90deg,#8B4513,#D2691E,#8B4513);border-radius:2px}
+.arrow-head{position:absolute;right:-15px;top:-8px;border-left:25px solid gold;border-top:10px solid transparent;border-bottom:10px solid transparent}
+
+/* MENSAJE HACKER CHICLE */
+.hacked-msg {
+  margin-top: 40px;
+  font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+  font-size: 38px;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 
+    3px 3px 0 #000,
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    0 0 20px rgba(255,255,255,0.5);
+  letter-spacing: 2px;
+}
+
+.hacked-msg span {
+  display: inline-block;
+  animation: blink 0.1s infinite, bounce 0.3s infinite;
+}
+
+/* Colores chicle para cada letra */
+.c1 { color: #FF69B4; } /* Rosa chicle */
+.c2 { color: #00FFFF; } /* Cyan */
+.c3 { color: #FF1493; } /* Rosa fuerte */
+.c4 { color: #7FFF00; } /* Verde lima */
+.c5 { color: #FF6EC7; } /* Rosa neon */
+.c6 { color: #FFFF00; } /* Amarillo */
+.c7 { color: #FF00FF; } /* Magenta */
+.c8 { color: #00FF7F; } /* Verde menta */
+.c9 { color: #FFA500; } /* Naranja */
+.c10 { color: #87CEEB; } /* Celeste */
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.3; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-5px) scale(1.1); }
+}
+
+.prince-line {
+  font-size: 52px;
+  margin-top: 10px;
+}
+
+.prince-line span {
+  animation: blink 0.08s infinite, rainbow 0.5s infinite, bounce 0.2s infinite;
+}
+
+@keyframes rainbow {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+.crown {
+  font-size: 60px;
+  animation: spin 0.5s infinite linear, blink 0.15s infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  from { transform: rotate(-10deg); }
+  to { transform: rotate(10deg); }
+}
+
+.counter{
+  margin-top:30px;
+  color:#ff6b8a;
+  font-size:28px;
+  text-shadow:0 0 20px rgba(255,107,138,0.5);
+  font-family: Georgia, serif;
+}
+.particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100}
+.p{position:absolute;font-size:30px;animation:boom 2s ease-out forwards}
+@keyframes boom{
+  0%{transform:scale(0);opacity:1}
+  100%{transform:scale(1) translateY(-200px) rotate(360deg);opacity:0}
+}
+
+/* Fondo con destellos */
+.bg-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  animation: bgFlash 0.2s infinite;
+}
+
+@keyframes bgFlash {
+  0%, 50% { background: transparent; }
+  25% { background: rgba(255,0,100,0.05); }
+  75% { background: rgba(0,255,255,0.05); }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-flash"></div>
+
+<div style="position:relative">
+  <div class="heart" id="heart"></div>
+  <div class="arrow" id="arrow">
+    <div class="arrow-shaft"></div>
+    <div class="arrow-head"></div>
+  </div>
+</div>
+
+<div class="hacked-msg" id="msg"></div>
+
+<div class="counter" id="counter">💘 Preparando amor...</div>
+<div class="particles" id="particles"></div>
+
+<script>
+// Crear texto con colores chicle
+function crearMensajeHacker() {
+  const linea1 = "Your heart has been hacked by";
+  const linea2 = "LuIs BaQuE";
+  const linea3 = "the PRINCE";
+  
+  const colores = ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10'];
+  const container = document.getElementById('msg');
+  
+  // Línea 1
+  let html = '<div>';
+  for(let i = 0; i < linea1.length; i++) {
+    const c = colores[i % colores.length];
+    const delay = i * 0.02;
+    if(linea1[i] === ' ') {
+      html += ' ';
+    } else {
+      html += `<span class="${c}" style="animation-delay:${delay}s">${linea1[i]}</span>`;
+    }
+  }
+  html += '</div>';
+  
+  // Línea 2 - nombre más grande
+  html += '<div class="prince-line">👑 ';
+  for(let i = 0; i < linea2.length; i++) {
+    const c = colores[(i + 3) % colores.length];
+    const delay = i * 0.03;
+    if(linea2[i] === ' ') {
+      html += ' ';
+    } else {
+      html += `<span class="${c}" style="animation-delay:${delay}s">${linea2[i]}</span>`;
+    }
+  }
+  html += ' 👑</div>';
+  
+  // Línea 3
+  html += '<div style="font-size:42px;margin-top:5px">';
+  for(let i = 0; i < linea3.length; i++) {
+    const c = colores[(i + 7) % colores.length];
+    const delay = i * 0.025;
+    if(linea3[i] === ' ') {
+      html += ' ';
+    } else {
+      html += `<span class="${c}" style="animation-delay:${delay}s">${linea3[i]}</span>`;
+    }
+  }
+  html += ' <span class="crown">👑</span></div>';
+  
+  container.innerHTML = html;
+}
+
+const CARTA = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>💌 Carta #NUM</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  min-height:100vh;
+  background:linear-gradient(135deg,#fff5f5,#ffe4e6,#ffd6d9);
+  padding:25px;
+  font-family:Georgia,serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+}
+.hacked{
+  font-family:'Comic Sans MS',cursive;
+  font-size:22px;
+  font-weight:bold;
+  text-align:center;
+  margin-bottom:20px;
+  animation:rainbow 0.3s infinite;
+}
+.hacked span{
+  display:inline-block;
+  animation:blink 0.1s infinite;
+}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0.3}}
+@keyframes rainbow{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}
+.c1{color:#FF69B4}.c2{color:#00FFFF}.c3{color:#FF1493}.c4{color:#7FFF00}.c5{color:#FF6EC7}
+.c6{color:#FFFF00}.c7{color:#FF00FF}.c8{color:#00FF7F}.c9{color:#FFA500}.c10{color:#87CEEB}
+.carta{
+  background:linear-gradient(180deg,#fff,#fff8f8);
+  padding:35px;
+  border-radius:8px;
+  max-width:550px;
+  box-shadow:0 10px 40px rgba(200,100,100,0.2);
+  border:1px solid rgba(255,150,150,0.3);
+}
+h1{
+  color:#e84a72;
+  text-align:center;
+  font-size:28px;
+  margin-bottom:20px;
+  font-style:italic;
+}
+p{
+  color:#4a3030;
+  font-size:16px;
+  line-height:1.8;
+  margin-bottom:15px;
+  text-align:justify;
+  text-indent:20px;
+}
+.firma{
+  text-align:right;
+  font-size:22px;
+  color:#d63964;
+  margin-top:25px;
+  font-style:italic;
+}
+.c{color:#ff4466;display:inline-block;animation:lat 1s infinite}
+@keyframes lat{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.num{
+  position:fixed;
+  top:10px;
+  right:10px;
+  background:#ff6b8a;
+  color:white;
+  padding:8px 15px;
+  border-radius:20px;
+  font-size:16px;
+}
+</style>
+</head>
+<body>
+<div class="num">💌 #NUM / 100</div>
+<div class="hacked">
+  <span class="c1">Y</span><span class="c2">o</span><span class="c3">u</span><span class="c4">r</span> 
+  <span class="c5">h</span><span class="c6">e</span><span class="c7">a</span><span class="c8">r</span><span class="c9">t</span> 
+  <span class="c10">h</span><span class="c1">a</span><span class="c2">c</span><span class="c3">k</span><span class="c4">e</span><span class="c5">d</span> 
+  <span class="c6">b</span><span class="c7">y</span> 
+  <span class="c8">👑</span>
+  <span class="c9">L</span><span class="c10">u</span><span class="c1">I</span><span class="c2">s</span> 
+  <span class="c3">B</span><span class="c4">a</span><span class="c5">Q</span><span class="c6">u</span><span class="c7">E</span>
+  <span class="c8">👑</span>
+</div>
+<div class="carta">
+<h1>💕 Carta de Amor a la Vida 💕</h1>
+<p>Querida Vida, mi eterna compañera:</p>
+<p>Escribo estas líneas con el corazón latiendo al ritmo de tu existencia, porque cada amanecer que me regalas es un poema que el sol escribe en mi piel. No hay palabras suficientes para agradecer el milagro de respirar, de sentir, de <span class="c">❤️</span> amar.</p>
+<p>Me has enseñado que en la oscuridad más profunda siempre nace una estrella, que las lágrimas son solo lluvia que riega los jardines del alma, y que cada cicatriz es un mapa de las batallas que nos hicieron más fuertes.</p>
+<p>Gracias por los amaneceres pintados de esperanza, por los atardeceres teñidos de nostalgia dulce, por las noches que guardan secretos y sueños. Gracias por el café caliente, las risas inesperadas, los abrazos que sanan.</p>
+<p>Prometo honrarte cada día, vivir con intensidad, abrazar la incertidumbre. Prometo reír hasta que duela y nunca dejar de asombrarme ante tu infinita belleza. <span class="c">💕</span></p>
+<div class="firma">Con amor infinito,<br>👑 LuIs BaQuE - The Prince 👑</div>
+</div>
+</body>
+</html>`;
+
+function boom() {
+  const c = document.getElementById('particles');
+  const e = ['❤️','💕','💖','✨','💫','💗','💝','🌟','💘','👑'];
+  for(let i=0;i<40;i++){
+    setTimeout(()=>{
+      const p = document.createElement('div');
+      p.className='p';
+      p.textContent=e[Math.floor(Math.random()*e.length)];
+      p.style.left=(35+Math.random()*30)+'%';
+      p.style.top=(35+Math.random()*30)+'%';
+      c.appendChild(p);
+    },i*25);
+  }
+}
+
+function abrir100() {
+  const counter = document.getElementById('counter');
+  let n = 0;
+  
+  function siguiente() {
+    if(n >= 100) {
+      counter.innerHTML = '👑 ¡100 CORAZONES HACKEADOS! 👑';
+      return;
+    }
+    
+    const x = Math.floor(Math.random() * (screen.width - 500));
+    const y = Math.floor(Math.random() * (screen.height - 600));
+    const html = CARTA.replace(/NUM/g, n+1);
+    
+    const w = window.open('', '', `width=500,height=600,left=${x},top=${y},scrollbars=yes`);
+    if(w) {
+      w.document.write(html);
+      w.document.close();
+      n++;
+      counter.innerHTML = '💘 Corazones hackeados: ' + n + ' / 100';
+    }
+    
+    setTimeout(siguiente, 80);
+  }
+  
+  siguiente();
+}
+
+// AUTO-EJECUTAR
+window.onload = function() {
+  const heart = document.getElementById('heart');
+  const arrow = document.getElementById('arrow');
+  
+  crearMensajeHacker();
+  
+  setTimeout(() => arrow.classList.add('go'), 500);
+  
+  setTimeout(() => {
+    heart.classList.add('big');
+    boom();
+  }, 1000);
+  
+  setTimeout(abrir100, 2000);
+};
+</script>
+</body>
+</html>
