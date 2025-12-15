@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>💘 HACKED BY LUIS BAQUE</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  min-height:100vh;
+  background:radial-gradient(ellipse at center,#2d0a1a,#0a0a0a);
+  overflow:hidden;
+  font-family:Georgia,serif;
+}
+
+/* INTRO SCREEN */
+#intro{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  z-index:10000;
+  background:radial-gradient(ellipse at center,#2d0a1a,#0a0a0a);
+  transition:opacity 1s;
+}
+#intro.hide{opacity:0;pointer-events:none}
+
+.heart{
+  position:relative;
+  width:150px;height:140px;
+  filter:drop-shadow(0 0 20px rgba(255,50,50,0.3));
+  transition:all 0.5s;
+}
+.heart::before,.heart::after{
+  content:'';position:absolute;top:0;
+  width:75px;height:120px;
+  background:linear-gradient(180deg,#ff4466,#cc2244,#991133);
+  border-radius:75px 75px 0 0;
+  transition:all 0.5s;
+}
+.heart::before{left:75px;transform:rotate(-45deg);transform-origin:0 100%}
+.heart::after{left:0;transform:rotate(45deg);transform-origin:100% 100%}
+.heart.big{
+  transform:scale(1.6);
+  filter:drop-shadow(0 0 80px rgba(255,0,50,0.9));
+}
+.heart.big::before,.heart.big::after{
+  background:linear-gradient(180deg,#ff0033,#ff0044,#cc0022);
+}
+
+.arrow{
+  position:absolute;
+  left:-300px;
+  width:400px;height:4px;
+  transition:left 0.8s ease-out;
+}
+.arrow.go{left:50px}
+.arrow-shaft{width:100%;height:4px;background:linear-gradient(90deg,#8B4513,#D2691E,#8B4513);border-radius:2px}
+.arrow-head{position:absolute;right:-15px;top:-8px;border-left:25px solid gold;border-top:10px solid transparent;border-bottom:10px solid transparent}
+
+.hacked-msg{
+  margin-top:40px;
+  font-family:'Comic Sans MS',cursive;
+  font-size:32px;
+  font-weight:bold;
+  text-align:center;
+  text-shadow:3px 3px 0 #000;
+}
+.hacked-msg span{display:inline-block;animation:blink 0.1s infinite,bounce 0.3s infinite}
+.prince-line{font-size:46px;margin-top:10px}
+.prince-line span{animation:blink 0.08s infinite,rainbow 0.5s infinite,bounce 0.2s infinite}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0.3}}
+@keyframes bounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5px) scale(1.1)}}
+@keyframes rainbow{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}
+.crown{font-size:50px;animation:spin 0.5s infinite linear,blink 0.15s infinite;display:inline-block}
+@keyframes spin{from{transform:rotate(-10deg)}to{transform:rotate(10deg)}}
+
+.c1{color:#FF69B4}.c2{color:#00FFFF}.c3{color:#FF1493}.c4{color:#7FFF00}.c5{color:#FF6EC7}
+.c6{color:#FFFF00}.c7{color:#FF00FF}.c8{color:#00FF7F}.c9{color:#FFA500}.c10{color:#87CEEB}
+
+.counter{
+  margin-top:30px;
+  color:#ff6b8a;
+  font-size:28px;
+  text-shadow:0 0 20px rgba(255,107,138,0.5);
+}
+
+.particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10001}
+.p{position:absolute;font-size:30px;animation:boom 2s ease-out forwards}
+@keyframes boom{0%{transform:scale(0);opacity:1}100%{transform:scale(1) translateY(-200px) rotate(360deg);opacity:0}}
+
+/* VENTANAS FLOTANTES */
+.window{
+  position:fixed;
+  width:340px;
+  background:linear-gradient(180deg,#fff,#fff5f5);
+  border-radius:10px;
+  box-shadow:0 10px 40px rgba(0,0,0,0.5),0 0 0 1px rgba(255,100,100,0.3);
+  overflow:hidden;
+  z-index:100;
+  animation:windowPop 0.4s ease-out;
+  cursor:move;
+}
+@keyframes windowPop{
+  0%{transform:scale(0) rotate(-10deg);opacity:0}
+  50%{transform:scale(1.1) rotate(5deg)}
+  100%{transform:scale(1) rotate(0deg);opacity:1}
+}
+
+.window-header{
+  background:linear-gradient(90deg,#ff6b8a,#ff8fab);
+  padding:8px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  cursor:move;
+}
+.window-title{
+  color:white;
+  font-size:13px;
+  font-weight:bold;
+  text-shadow:1px 1px 2px rgba(0,0,0,0.3);
+}
+.window-btns{display:flex;gap:6px}
+.window-btn{
+  width:12px;height:12px;
+  border-radius:50%;
+  border:none;
+  cursor:pointer;
+}
+.btn-close{background:#ff5f56}
+.btn-min{background:#ffbd2e}
+.btn-max{background:#27ca40}
+
+.window-content{
+  padding:15px;
+  max-height:300px;
+  overflow-y:auto;
+  font-size:13px;
+  line-height:1.6;
+  color:#4a3030;
+}
+.window-content h2{
+  color:#e84a72;
+  font-size:18px;
+  text-align:center;
+  margin-bottom:12px;
+  font-style:italic;
+}
+.window-content p{
+  margin-bottom:10px;
+  text-indent:15px;
+  text-align:justify;
+}
+.window-firma{
+  text-align:right;
+  color:#d63964;
+  font-style:italic;
+  font-size:15px;
+  margin-top:15px;
+}
+.hacked-mini{
+  font-family:'Comic Sans MS',cursive;
+  font-size:11px;
+  text-align:center;
+  margin-bottom:10px;
+  animation:rainbow 0.5s infinite;
+}
+.hacked-mini span{animation:blink 0.1s infinite}
+
+.corazon{color:#ff4466;animation:lat 1s infinite;display:inline-block}
+@keyframes lat{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+
+/* FONDO FLASH */
+.bg-flash{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  pointer-events:none;
+  z-index:1;
+  animation:bgFlash 0.3s infinite;
+}
+@keyframes bgFlash{
+  0%,100%{background:transparent}
+  25%{background:rgba(255,0,100,0.03)}
+  75%{background:rgba(0,255,255,0.03)}
+}
+
+/* FINAL MESSAGE */
+#finalMsg{
+  position:fixed;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  font-family:'Comic Sans MS',cursive;
+  font-size:28px;
+  color:#ff6b8a;
+  text-shadow:0 0 30px rgba(255,107,138,0.8);
+  z-index:99999;
+  text-align:center;
+  display:none;
+  background:rgba(0,0,0,0.8);
+  padding:30px 50px;
+  border-radius:20px;
+  border:3px solid #ff6b8a;
+}
+</style>
+</head>
+<body>
+
+<div class="bg-flash"></div>
+
+<!-- INTRO -->
+<div id="intro">
+  <div style="position:relative">
+    <div class="heart" id="heart"></div>
+    <div class="arrow" id="arrow">
+      <div class="arrow-shaft"></div>
+      <div class="arrow-head"></div>
+    </div>
+  </div>
+  
+  <div class="hacked-msg" id="msg"></div>
+  <div class="counter" id="counter">💘 Preparando amor...</div>
+  <div class="particles" id="particles"></div>
+</div>
+
+<!-- CONTAINER FOR WINDOWS -->
+<div id="windowContainer"></div>
+
+<div id="finalMsg">
+  👑 100 CORAZONES HACKEADOS 👑<br>
+  <span style="font-size:22px">by LuIs BaQuE the PRINCE</span><br>
+  <span class="corazon" style="font-size:50px">💘</span>
+</div>
+
+<script>
+const CARTA_CONTENT = `
+<div class="hacked-mini">
+  <span class="c1">💘</span> <span class="c2">H</span><span class="c3">a</span><span class="c4">c</span><span class="c5">k</span><span class="c6">e</span><span class="c7">d</span> 
+  <span class="c8">b</span><span class="c9">y</span> 
+  <span class="c10">L</span><span class="c1">u</span><span class="c2">I</span><span class="c3">s</span> 
+  <span class="c4">B</span><span class="c5">a</span><span class="c6">Q</span><span class="c7">u</span><span class="c8">E</span> <span class="c9">👑</span>
+</div>
+<h2>💕 Carta de Amor a la Vida 💕</h2>
+<p>Querida Vida, mi eterna compañera:</p>
+<p>Cada amanecer que me regalas es un poema que el sol escribe en mi piel. No hay palabras suficientes para agradecer el milagro de respirar, de sentir, de <span class="corazon">❤️</span> amar.</p>
+<p>Me has enseñado que en la oscuridad siempre nace una estrella, que las lágrimas son lluvia que riega los jardines del alma.</p>
+<p>Gracias por los amaneceres de esperanza, por las risas inesperadas, por los abrazos que sanan. <span class="corazon">💕</span></p>
+<div class="window-firma">Con amor infinito,<br>👑 LuIs BaQuE 👑</div>
+`;
+
+function crearMensajeHacker() {
+  const linea1 = "Your heart has been hacked by";
+  const linea2 = "LuIs BaQuE";
+  const linea3 = "the PRINCE";
+  const colores = ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10'];
+  const container = document.getElementById('msg');
+  
+  let html = '<div>';
+  for(let i = 0; i < linea1.length; i++) {
+    if(linea1[i] === ' ') html += ' ';
+    else html += `<span class="${colores[i % 10]}">${linea1[i]}</span>`;
+  }
+  html += '</div><div class="prince-line">👑 ';
+  for(let i = 0; i < linea2.length; i++) {
+    if(linea2[i] === ' ') html += ' ';
+    else html += `<span class="${colores[(i+3) % 10]}">${linea2[i]}</span>`;
+  }
+  html += ' 👑</div><div style="font-size:38px;margin-top:5px">';
+  for(let i = 0; i < linea3.length; i++) {
+    if(linea3[i] === ' ') html += ' ';
+    else html += `<span class="${colores[(i+7) % 10]}">${linea3[i]}</span>`;
+  }
+  html += ' <span class="crown">👑</span></div>';
+  container.innerHTML = html;
+}
+
+function boom() {
+  const c = document.getElementById('particles');
+  const e = ['❤️','💕','💖','✨','💫','💗','💝','🌟','💘','👑'];
+  for(let i=0;i<50;i++){
+    setTimeout(()=>{
+      const p = document.createElement('div');
+      p.className='p';
+      p.textContent=e[Math.floor(Math.random()*e.length)];
+      p.style.left=(30+Math.random()*40)+'%';
+      p.style.top=(30+Math.random()*40)+'%';
+      c.appendChild(p);
+    },i*20);
+  }
+}
+
+function crearVentana(num) {
+  const container = document.getElementById('windowContainer');
+  const w = document.createElement('div');
+  w.className = 'window';
+  w.style.left = Math.random() * (window.innerWidth - 360) + 'px';
+  w.style.top = Math.random() * (window.innerHeight - 400) + 'px';
+  w.style.zIndex = 100 + num;
+  
+  w.innerHTML = `
+    <div class="window-header">
+      <span class="window-title">💌 Carta #${num} - LuIs BaQuE</span>
+      <div class="window-btns">
+        <button class="window-btn btn-min"></button>
+        <button class="window-btn btn-max"></button>
+        <button class="window-btn btn-close" onclick="this.closest('.window').remove()"></button>
+      </div>
+    </div>
+    <div class="window-content">${CARTA_CONTENT}</div>
+  `;
+  
+  container.appendChild(w);
+  
+  // Hacer draggable
+  let isDragging = false;
+  let offsetX, offsetY;
+  
+  w.querySelector('.window-header').addEventListener('mousedown', (e) => {
+    isDragging = true;
+    offsetX = e.clientX - w.offsetLeft;
+    offsetY = e.clientY - w.offsetTop;
+    w.style.zIndex = 10000 + num;
+  });
+  
+  document.addEventListener('mousemove', (e) => {
+    if(isDragging) {
+      w.style.left = (e.clientX - offsetX) + 'px';
+      w.style.top = (e.clientY - offsetY) + 'px';
+    }
+  });
+  
+  document.addEventListener('mouseup', () => isDragging = false);
+}
+
+function crear100Ventanas() {
+  const counter = document.getElementById('counter');
+  let n = 0;
+  
+  function siguiente() {
+    if(n >= 100) {
+      counter.innerHTML = '👑 ¡100 CORAZONES HACKEADOS! 👑';
+      setTimeout(() => {
+        document.getElementById('finalMsg').style.display = 'block';
+      }, 500);
+      return;
+    }
+    
+    n++;
+    crearVentana(n);
+    counter.innerHTML = '💘 Corazones: ' + n + ' / 100';
+    
+    setTimeout(siguiente, 60);
+  }
+  
+  siguiente();
+}
+
+// AUTO-EJECUTAR
+window.onload = function() {
+  const heart = document.getElementById('heart');
+  const arrow = document.getElementById('arrow');
+  const intro = document.getElementById('intro');
+  
+  crearMensajeHacker();
+  
+  setTimeout(() => arrow.classList.add('go'), 500);
+  
+  setTimeout(() => {
+    heart.classList.add('big');
+    boom();
+  }, 1000);
+  
+  setTimeout(() => {
+    intro.classList.add('hide');
+    crear100Ventanas();
+  }, 2500);
+};
+</script>
+</body>
+</html>
