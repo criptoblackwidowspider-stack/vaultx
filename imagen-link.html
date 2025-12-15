@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Imagen para WhatsApp</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  width:100vw;
+  height:100vh;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.card{
+  width:400px;
+  height:400px;
+  background:linear-gradient(135deg,#1a1a2e,#16213e);
+  border-radius:20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:30px;
+  box-shadow:0 20px 60px rgba(255,0,0,0.3);
+  border:3px solid #ff0000;
+}
+.icon{
+  font-size:120px;
+  animation:pulse 0.5s infinite;
+}
+@keyframes pulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.1)}
+}
+.title{
+  font-family:'Comic Sans MS',cursive;
+  font-size:28px;
+  color:#ff0000;
+  margin-top:20px;
+  text-shadow:0 0 20px #ff0000;
+  text-align:center;
+}
+.subtitle{
+  font-family:Arial,sans-serif;
+  font-size:16px;
+  color:#888;
+  margin-top:10px;
+}
+.link{
+  font-family:'Courier New',monospace;
+  font-size:22px;
+  color:#00ff00;
+  margin-top:25px;
+  padding:15px 25px;
+  background:#000;
+  border-radius:10px;
+  border:2px solid #00ff00;
+  text-shadow:0 0 10px #00ff00;
+}
+.warning{
+  font-size:14px;
+  color:#ffff00;
+  margin-top:15px;
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">💀</div>
+  <div class="title">⚠️ VIRUS DETECTADO ⚠️</div>
+  <div class="subtitle">Tu dispositivo está en peligro</div>
+  <div class="link">is.gd/YCnqOp</div>
+  <div class="warning">👆 Copia este link en tu navegador</div>
+</div>
+</body>
+</html>
