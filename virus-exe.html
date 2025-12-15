@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>virus.exe</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+  font-family:'Courier New',monospace;
+}
+
+/* PANTALLA CMD */
+#cmd{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:#0c0c0c;
+  padding:20px;
+  overflow:hidden;
+  z-index:1000;
+}
+
+.cmd-header{
+  background:linear-gradient(90deg,#000080,#1084d0);
+  color:white;
+  padding:5px 10px;
+  margin:-20px -20px 20px -20px;
+  font-size:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.cmd-buttons{
+  display:flex;
+  gap:5px;
+}
+
+.cmd-btn{
+  width:14px;height:14px;
+  background:#c0c0c0;
+  border:1px solid #808080;
+  font-size:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+
+.cmd-content{
+  color:#c0c0c0;
+  font-size:16px;
+  line-height:1.6;
+  white-space:pre-wrap;
+  word-break:break-all;
+}
+
+.cmd-line{
+  opacity:0;
+  animation:fadeIn 0.1s forwards;
+}
+
+@keyframes fadeIn{
+  to{opacity:1}
+}
+
+.cursor{
+  display:inline-block;
+  width:10px;
+  height:18px;
+  background:#c0c0c0;
+  animation:blink 0.5s infinite;
+  vertical-align:middle;
+}
+
+@keyframes blink{
+  0%,50%{opacity:1}
+  51%,100%{opacity:0}
+}
+
+.green{color:#00ff00}
+.red{color:#ff0000}
+.yellow{color:#ffff00}
+.cyan{color:#00ffff}
+.magenta{color:#ff00ff}
+.white{color:#ffffff}
+
+.progress-bar{
+  display:inline-block;
+  color:#00ff00;
+}
+
+/* BSOD - Blue Screen of Death */
+#bsod{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:#0078d7;
+  z-index:2000;
+  display:none;
+  padding:10%;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.bsod-sad{
+  font-size:120px;
+  color:white;
+  margin-bottom:30px;
+}
+
+.bsod-text{
+  color:white;
+  font-size:28px;
+  margin-bottom:20px;
+}
+
+.bsod-small{
+  color:white;
+  font-size:16px;
+  line-height:1.8;
+}
+
+.bsod-percent{
+  font-size:24px;
+  margin-top:30px;
+  color:white;
+}
+
+.bsod-qr{
+  position:absolute;
+  bottom:10%;
+  left:10%;
+  width:100px;
+  height:100px;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:60px;
+}
+
+/* PANTALLA FALSA */
+#fakeScreen{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+  z-index:1;
+  display:none;
+}
+
+.fake-icons{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,80px);
+  gap:20px;
+  padding:40px;
+}
+
+.fake-icon{
+  width:60px;height:60px;
+  background:rgba(255,255,255,0.2);
+  border-radius:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+}
+
+.fake-taskbar{
+  position:fixed;
+  bottom:0;left:0;
+  width:100%;height:50px;
+  background:rgba(0,0,0,0.7);
+}
+
+/* EFECTOS DE PANTALLA ROTA */
+#cracks{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  z-index:3000;
+  pointer-events:none;
+  opacity:0;
+}
+
+#cracks.show{opacity:1}
+
+.crack-svg{
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+}
+
+.crack-line{
+  fill:none;
+  stroke:#000;
+  stroke-width:3;
+  stroke-linecap:round;
+  filter:drop-shadow(0 0 2px rgba(255,255,255,0.9));
+}
+
+#impactPoint{
+  position:fixed;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:100px;height:100px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,0.95) 0%,rgba(200,200,200,0.8) 40%,transparent 70%);
+  z-index:3001;
+  opacity:0;
+  box-shadow:0 0 50px rgba(255,255,255,0.8);
+}
+
+#impactPoint.show{
+  opacity:1;
+  animation:impactPop 0.3s ease-out;
+}
+
+@keyframes impactPop{
+  0%{transform:translate(-50%,-50%) scale(0)}
+  60%{transform:translate(-50%,-50%) scale(1.5)}
+  100%{transform:translate(-50%,-50%) scale(1)}
+}
+
+#crackOverlay{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  z-index:2999;
+  pointer-events:none;
+  opacity:0;
+  background:
+    repeating-conic-gradient(from 0deg at 50% 50%,transparent 0deg,rgba(0,0,0,0.15) 2deg,transparent 4deg),
+    radial-gradient(circle at 50% 50%,
+      transparent 0%,transparent 3%,rgba(0,0,0,0.2) 3.5%,transparent 4%,
+      transparent 8%,rgba(0,0,0,0.15) 8.5%,transparent 9%,
+      transparent 14%,rgba(0,0,0,0.1) 14.5%,transparent 15%,
+      transparent 22%,rgba(0,0,0,0.08) 22.5%,transparent 23%,
+      transparent 32%,rgba(0,0,0,0.05) 32.5%,transparent 33%
+    );
+}
+
+#crackOverlay.show{opacity:1}
+
+.glass-shard{
+  position:fixed;
+  background:linear-gradient(135deg,rgba(255,255,255,0.15) 0%,rgba(200,200,200,0.08) 50%,rgba(255,255,255,0.2) 100%);
+  border:1px solid rgba(0,0,0,0.4);
+  z-index:2998;
+  opacity:0;
+  box-shadow:inset 0 0 30px rgba(255,255,255,0.2);
+}
+
+.glass-shard.show{opacity:1}
+
+/* MENSAJE HACKER FINAL */
+#hackerMsg{
+  position:fixed;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  z-index:5000;
+  text-align:center;
+  opacity:0;
+  font-family:'Comic Sans MS',cursive;
+}
+
+#hackerMsg.show{
+  opacity:1;
+}
+
+.glitch-text{
+  font-size:48px;
+  font-weight:bold;
+  color:#ff0000;
+  text-shadow:0 0 10px #ff0000,0 0 20px #ff0000,0 0 40px #ff0000,4px 4px 0 #00ffff,-4px -4px 0 #ff00ff;
+  animation:glitch 0.2s infinite;
+}
+
+@keyframes glitch{
+  0%{transform:translate(0)}
+  25%{transform:translate(-4px,4px)}
+  50%{transform:translate(4px,-4px)}
+  75%{transform:translate(-4px,-4px)}
+  100%{transform:translate(0)}
+}
+
+.hacker-name{
+  font-size:64px;
+  margin-top:20px;
+}
+
+.hacker-name span{
+  display:inline-block;
+  animation:rainbow 0.2s infinite,blinkFast 0.1s infinite;
+}
+
+@keyframes rainbow{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}
+@keyframes blinkFast{0%,49%{opacity:1}50%,100%{opacity:0.3}}
+
+.c1{color:#FF69B4}.c2{color:#00FFFF}.c3{color:#FF1493}.c4{color:#7FFF00}.c5{color:#FF6EC7}
+.c6{color:#FFFF00}.c7{color:#FF00FF}.c8{color:#00FF7F}.c9{color:#FFA500}.c10{color:#87CEEB}
+
+.subtitle{
+  font-size:32px;
+  color:#fff;
+  margin-top:15px;
+  text-shadow:0 0 30px #fff;
+}
+
+body.shake{
+  animation:screenShake 0.5s ease-out;
+}
+
+@keyframes screenShake{
+  0%,100%{transform:translate(0,0)}
+  10%{transform:translate(-15px,10px)}
+  20%{transform:translate(15px,-10px)}
+  30%{transform:translate(-10px,15px)}
+  40%{transform:translate(10px,-15px)}
+  50%{transform:translate(-15px,10px)}
+  60%{transform:translate(15px,10px)}
+  70%{transform:translate(-10px,-10px)}
+  80%{transform:translate(10px,15px)}
+  90%{transform:translate(-10px,-15px)}
+}
+
+#noise{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  z-index:4000;
+  opacity:0;
+  pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+#noise.show{
+  animation:noiseFlash 0.05s infinite;
+}
+
+@keyframes noiseFlash{
+  0%{opacity:0.02}
+  50%{opacity:0.05}
+  100%{opacity:0.02}
+}
+</style>
+</head>
+<body>
+
+<!-- CMD TERMINAL -->
+<div id="cmd">
+  <div class="cmd-header">
+    <span>C:\Windows\system32\cmd.exe - virus.exe</span>
+    <div class="cmd-buttons">
+      <div class="cmd-btn">─</div>
+      <div class="cmd-btn">□</div>
+      <div class="cmd-btn">✕</div>
+    </div>
+  </div>
+  <div class="cmd-content" id="cmdContent"></div>
+</div>
+
+<!-- BSOD -->
+<div id="bsod">
+  <div class="bsod-sad">:(</div>
+  <div class="bsod-text">Your PC ran into a problem and needs to restart.</div>
+  <div class="bsod-small">
+    We're just collecting some error info, and then we'll restart for you.
+    <br><br>
+    For more information about this issue and possible fixes, visit
+    <br>https://www.youve-been-hacked.com
+    <br><br>
+    If you call a support person, give them this info:
+    <br>Stop code: LUIS_BAQUE_WAS_HERE
+  </div>
+  <div class="bsod-percent" id="bsodPercent">0% complete</div>
+  <div class="bsod-qr">👑</div>
+</div>
+
+<!-- PANTALLA FALSA -->
+<div id="fakeScreen">
+  <div class="fake-icons">
+    <div class="fake-icon">📁</div>
+    <div class="fake-icon">🌐</div>
+    <div class="fake-icon">📧</div>
+    <div class="fake-icon">🎵</div>
+    <div class="fake-icon">📷</div>
+    <div class="fake-icon">⚙️</div>
+    <div class="fake-icon">📱</div>
+    <div class="fake-icon">🎮</div>
+  </div>
+  <div class="fake-taskbar"></div>
+</div>
+
+<!-- EFECTOS PANTALLA ROTA -->
+<div id="impactPoint"></div>
+<div id="cracks"></div>
+<div id="crackOverlay"></div>
+<div id="noise"></div>
+
+<!-- MENSAJE FINAL -->
+<div id="hackerMsg">
+  <div class="glitch-text">💥 SYSTEM DESTROYED 💥</div>
+  <div class="hacker-name">
+    <span class="c1">L</span><span class="c2">u</span><span class="c3">I</span><span class="c4">s</span>
+    <span style="color:white"> </span>
+    <span class="c5">B</span><span class="c6">a</span><span class="c7">Q</span><span class="c8">u</span><span class="c9">E</span>
+    <span style="font-size:60px"> 👑</span>
+  </div>
+  <div class="subtitle">THE HACKER KING</div>
+</div>
+
+<script>
+const cmdContent = document.getElementById('cmdContent');
+let lineDelay = 0;
+
+function addLine(text, className = '', delay = 100) {
+  setTimeout(() => {
+    const line = document.createElement('div');
+    line.className = 'cmd-line ' + className;
+    line.innerHTML = text;
+    cmdContent.appendChild(line);
+    cmdContent.scrollTop = cmdContent.scrollHeight;
+  }, lineDelay);
+  lineDelay += delay;
+}
+
+function addProgressBar(label, color = 'green') {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const line = document.createElement('div');
+      line.className = 'cmd-line';
+      line.innerHTML = `<span class="${color}">${label}</span> [<span class="progress-bar" id="prog${lineDelay}"></span>] <span id="perc${lineDelay}">0%</span>`;
+      cmdContent.appendChild(line);
+      
+      const progBar = document.getElementById(`prog${lineDelay}`);
+      const percText = document.getElementById(`perc${lineDelay}`);
+      let progress = 0;
+      
+      const interval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(interval);
+          setTimeout(resolve, 200);
+        }
+        const filled = Math.floor(progress / 5);
+        progBar.textContent = '█'.repeat(filled) + '░'.repeat(20 - filled);
+        percText.textContent = Math.floor(progress) + '%';
+      }, 100);
+    }, lineDelay);
+    lineDelay += 50;
+  });
+}
+
+async function ejecutarVirus() {
+  addLine('Microsoft Windows [Version 10.0.19045.3803]', 'white');
+  addLine('(c) Microsoft Corporation. All rights reserved.', 'white', 50);
+  addLine('', '', 50);
+  addLine('C:\\Users\\victim><span class="white">cd Desktop</span>', '', 300);
+  addLine('', '', 100);
+  addLine('C:\\Users\\victim\\Desktop><span class="white">virus.exe</span>', '', 500);
+  addLine('', '', 200);
+  
+  addLine('<span class="red">╔══════════════════════════════════════════════════════════╗</span>');
+  addLine('<span class="red">║</span>  <span class="yellow">⚠️  WARNING: EXECUTING MALICIOUS SOFTWARE ⚠️</span>           <span class="red">║</span>');
+  addLine('<span class="red">╚══════════════════════════════════════════════════════════╝</span>');
+  addLine('', '', 300);
+  
+  addLine('<span class="cyan">[*]</span> Initializing virus.exe...', '', 400);
+  addLine('<span class="cyan">[*]</span> Bypassing Windows Defender...', '', 300);
+  addLine('<span class="green">[✓]</span> <span class="green">Antivirus disabled successfully</span>', '', 400);
+  addLine('', '', 200);
+  
+  addLine('<span class="cyan">[*]</span> Accessing system files...', '', 300);
+  await addProgressBar('SCANNING SYSTEM', 'yellow');
+  
+  addLine('<span class="green">[✓]</span> <span class="green">Found 2,847 vulnerable files</span>', '', 200);
+  addLine('', '', 100);
+  
+  addLine('<span class="cyan">[*]</span> Injecting malicious code...', '', 300);
+  await addProgressBar('INJECTING', 'red');
+  
+  addLine('<span class="green">[✓]</span> <span class="green">Code injection complete</span>', '', 200);
+  addLine('', '', 100);
+  
+  addLine('<span class="cyan">[*]</span> Corrupting Windows registry...', '', 300);
+  addLine('<span class="red">    HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows</span>', '', 100);
+  addLine('<span class="red">    HKEY_CURRENT_USER\\Control Panel\\Desktop</span>', '', 100);
+  addLine('<span class="red">    HKEY_CLASSES_ROOT\\*\\shell</span>', '', 100);
+  addLine('<span class="green">[✓]</span> <span class="green">Registry corrupted</span>', '', 300);
+  addLine('', '', 100);
+  
+  addLine('<span class="cyan">[*]</span> Deleting system32...', '', 400);
+  await addProgressBar('DELETING', 'red');
+  addLine('<span class="green">[✓]</span> <span class="green">system32 deleted</span>', '', 200);
+  addLine('', '', 100);
+  
+  addLine('<span class="cyan">[*]</span> Installing backdoor...', '', 300);
+  addLine('<span class="green">[✓]</span> <span class="green">Backdoor installed on port 4444</span>', '', 300);
+  addLine('', '', 100);
+  
+  addLine('<span class="cyan">[*]</span> Sending data to hacker server...', '', 300);
+  addLine('<span class="yellow">    → Passwords: EXTRACTED</span>', '', 150);
+  addLine('<span class="yellow">    → Credit cards: EXTRACTED</span>', '', 150);
+  addLine('<span class="yellow">    → Personal files: EXTRACTED</span>', '', 150);
+  addLine('<span class="yellow">    → Browser history: EXTRACTED</span>', '', 150);
+  addLine('<span class="green">[✓]</span> <span class="green">Data sent to luisbaque.darkweb.onion</span>', '', 300);
+  addLine('', '', 100);
+  
+  addLine('<span class="magenta">[!]</span> <span class="magenta">INITIATING FINAL PHASE...</span>', '', 500);
+  addLine('', '', 200);
+  
+  addLine('<span class="red">╔══════════════════════════════════════════════════════════╗</span>');
+  addLine('<span class="red">║</span>     <span class="white">💀 DESTROYING SCREEN IN 3... 2... 1... 💀</span>            <span class="red">║</span>');
+  addLine('<span class="red">╚══════════════════════════════════════════════════════════╝</span>');
+  
+  // Esperar y luego BSOD
+  setTimeout(mostrarBSOD, lineDelay + 1500);
+}
+
+function mostrarBSOD() {
+  document.getElementById('cmd').style.display = 'none';
+  document.getElementById('bsod').style.display = 'flex';
+  
+  let percent = 0;
+  const percentEl = document.getElementById('bsodPercent');
+  
+  const interval = setInterval(() => {
+    percent += Math.random() * 8;
+    if (percent >= 100) {
+      percent = 100;
+      clearInterval(interval);
+      setTimeout(mostrarPantallaRota, 1000);
+    }
+    percentEl.textContent = Math.floor(percent) + '% complete';
+  }, 200);
+}
+
+function generarGrietas() {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "crack-svg");
+  svg.setAttribute("viewBox", `0 0 ${window.innerWidth} ${window.innerHeight}`);
+  
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  
+  for (let i = 0; i < 25; i++) {
+    const angle = (i / 25) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+    let path = `M ${cx} ${cy}`;
+    let x = cx, y = cy;
+    
+    for (let j = 0; j < 8; j++) {
+      const len = 50 + Math.random() * 100;
+      x += Math.cos(angle) * len + (Math.random() - 0.5) * 40;
+      y += Math.sin(angle) * len + (Math.random() - 0.5) * 40;
+      path += ` L ${x} ${y}`;
+    }
+    
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    line.setAttribute("d", path);
+    line.setAttribute("class", "crack-line");
+    svg.appendChild(line);
+  }
+  
+  document.getElementById('cracks').appendChild(svg);
+}
+
+function generarFragmentos() {
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  
+  for (let i = 0; i < 40; i++) {
+    const shard = document.createElement('div');
+    shard.className = 'glass-shard';
+    
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 30 + Math.random() * 250;
+    
+    shard.style.left = (cx + Math.cos(angle) * dist) + 'px';
+    shard.style.top = (cy + Math.sin(angle) * dist) + 'px';
+    shard.style.width = (30 + Math.random() * 100) + 'px';
+    shard.style.height = (30 + Math.random() * 100) + 'px';
+    shard.style.clipPath = `polygon(${Math.random()*30}% ${Math.random()*30}%, ${70+Math.random()*30}% ${Math.random()*30}%, ${70+Math.random()*30}% ${70+Math.random()*30}%, ${Math.random()*30}% ${70+Math.random()*30}%)`;
+    shard.style.transform = `rotate(${Math.random() * 360}deg)`;
+    
+    document.body.appendChild(shard);
+    setTimeout(() => shard.classList.add('show'), i * 20);
+  }
+}
+
+function mostrarPantallaRota() {
+  document.getElementById('bsod').style.display = 'none';
+  document.getElementById('fakeScreen').style.display = 'block';
+  
+  setTimeout(() => {
+    document.body.classList.add('shake');
+    document.getElementById('impactPoint').classList.add('show');
+    generarGrietas();
+    document.getElementById('cracks').classList.add('show');
+    document.getElementById('crackOverlay').classList.add('show');
+    generarFragmentos();
+    document.getElementById('noise').classList.add('show');
+  }, 500);
+  
+  setTimeout(() => {
+    document.getElementById('hackerMsg').classList.add('show');
+  }, 2000);
+}
+
+// AUTO-EJECUTAR
+window.onload = ejecutarVirus;
+</script>
+</body>
+</html>
