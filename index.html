@@ -115,7 +115,7 @@ body{background:#0a0a0a;overscroll-behavior:none}
       <input type="text" id="recoverCid" placeholder="CID (Qm...)" class="w-full p-3 rounded-xl bg-white/5 border border-white/20 text-white mb-3 focus:outline-none focus:border-amber-500 font-mono text-xs">
       <input type="password" id="recoverPass" placeholder="Contraseña maestra..." class="w-full p-3 rounded-xl bg-white/5 border border-white/20 text-white mb-3 focus:outline-none focus:border-amber-500">
       <button onclick="recoverVault()" id="recoverBtn" class="w-full py-3 rounded-xl font-bold bg-amber-500 text-black mb-2 active:scale-95">🔓 Recuperar</button>
-      <button onclick="backToChoose()" class="text-xs text-gray-500">← Volver</button>
+      <button onclick="backToPassword()" class="text-xs text-gray-500">← Volver</button>
     </div>
 
     <!-- PASSWORD -->
@@ -126,7 +126,11 @@ body{background:#0a0a0a;overscroll-behavior:none}
       <input type="password" id="pass2" placeholder="Confirmar contraseña..." class="w-full p-3 rounded-xl bg-white/5 border border-white/20 text-white mb-3 focus:outline-none focus:border-amber-500">
       <button onclick="activateVault()" class="w-full py-3 rounded-xl font-bold bg-amber-500 text-black active:scale-95">🔐 Crear Bóveda</button>
       <p class="text-xs text-red-400/60 mt-3">⚠️ GUARDA tu contraseña</p>
-      <button onclick="backToChoose()" class="text-xs text-gray-500 mt-2">← Volver</button>
+      
+      <div class="mt-6 pt-4 border-t border-white/10">
+        <p class="text-xs text-gray-400 mb-2">¿Ya tienes una bóveda?</p>
+        <button onclick="showRecoverScreen()" class="w-full py-2 rounded-xl bg-white/10 text-amber-400 text-sm active:bg-white/20">🔓 Recuperar bóveda existente</button>
+      </div>
     </div>
 
     <!-- DASHBOARD -->
@@ -351,12 +355,26 @@ function showManualRecover(){
   document.getElementById('recover').classList.remove('hidden');
 }
 
+function showRecoverScreen(){
+  document.getElementById('recoverCid').value = '';
+  document.getElementById('password').classList.add('hidden');
+  document.getElementById('recover').classList.remove('hidden');
+}
+
 function backToChoose(){
   document.getElementById('recover').classList.add('hidden');
   document.getElementById('password').classList.add('hidden');
   const savedCid = localStorage.getItem('vaultx_cid');
-  if(savedCid) document.getElementById('chooseScreen').classList.remove('hidden');
-  else document.getElementById('login').classList.remove('hidden');
+  if(savedCid) {
+    document.getElementById('chooseScreen').classList.remove('hidden');
+  } else {
+    document.getElementById('password').classList.remove('hidden');
+  }
+}
+
+function backToPassword(){
+  document.getElementById('recover').classList.add('hidden');
+  document.getElementById('password').classList.remove('hidden');
 }
 
 // ============================================================================
