@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#c9a227">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VaultX">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="https://rose-central-chameleon-281.mypinata.cloud/ipfs/bafybeifroooilpfbzt4hmgz4dv2kbmz5mebppihay3v5tg353vegs23i2m">
+<title>VaultX - Encrypted Cloud</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+*{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+body{background:#0a0a0a;overscroll-behavior:none}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 20px rgba(201,162,39,0.4))}50%{filter:drop-shadow(0 0 40px rgba(201,162,39,0.8))}}
+@keyframes gradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.float{animation:float 3s ease-in-out infinite}
+.glow{animation:glow 2s ease-in-out infinite}
+.gradient-btn{animation:gradient 4s ease infinite;background-size:300% 300%}
+.spin{animation:spin 1s linear infinite}
+.progress{transition:width 0.3s}
+.safe-bottom{padding-bottom:env(safe-area-inset-bottom,20px)}
+</style>
+</head>
+<body class="min-h-screen text-white">
+
+<canvas id="bg" class="fixed inset-0 z-0"></canvas>
+
+<div class="relative z-10 min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="p-4 border-b border-white/10 safe-top">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="https://rose-central-chameleon-281.mypinata.cloud/ipfs/bafybeifroooilpfbzt4hmgz4dv2kbmz5mebppihay3v5tg353vegs23i2m" crossorigin="anonymous" class="w-10 h-10 rounded-lg">
+        <div>
+          <h1 class="text-xl font-bold text-amber-400">VAULTX</h1>
+          <p class="text-[10px] text-gray-500 tracking-widest">ENCRYPTED CLOUD</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div id="userInfo" class="hidden items-center gap-2 text-sm text-gray-400">
+          <img id="userPic" class="w-8 h-8 rounded-full">
+          <span id="userName" class="hidden sm:inline"></span>
+        </div>
+        <button id="logoutBtn" onclick="logout()" class="hidden px-3 py-1 text-xs rounded bg-red-500/20 text-red-400 active:bg-red-500/40">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 flex flex-col items-center justify-center p-4 overflow-auto">
+
+    <!-- LOGIN -->
+    <div id="login" class="text-center max-w-md mx-auto w-full">
+      <div class="mb-6">
+        <img src="https://rose-central-chameleon-281.mypinata.cloud/ipfs/bafybeifroooilpfbzt4hmgz4dv2kbmz5mebppihay3v5tg353vegs23i2m" crossorigin="anonymous" class="w-36 h-36 mx-auto glow cursor-pointer rounded-xl object-cover" onclick="googleLogin()">
+      </div>
+      <h2 class="text-2xl font-bold mb-2">VaultX</h2>
+      <p class="text-gray-400 mb-2 text-sm">Tu bóveda cifrada en la nube</p>
+      <p class="text-amber-400 text-xs mb-6">AES-256-GCM • IPFS • Google APIs</p>
+
+      <button onclick="googleLogin()" id="btn" class="w-full py-4 rounded-2xl font-bold text-white flex items-center justify-center gap-3 gradient-btn active:scale-95 transition-transform" style="background:linear-gradient(135deg,#4285f4,#ea4335,#fbbc05,#34a853)">
+        <svg class="w-6 h-6" viewBox="0 0 24 24"><path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        <span id="btnText">Conectar con Google</span>
+      </button>
+
+      <div class="flex justify-center gap-4 mt-6">
+        <div class="text-center">
+          <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-1" style="background:rgba(66,133,244,0.15);border:1px solid rgba(66,133,244,0.3)">
+            <img src="https://rose-central-chameleon-281.mypinata.cloud/ipfs/bafkreicauohky5m36h6ryek6eikasvd7fuhj4ykomgeblzu6acj5zr64pq" crossorigin="anonymous" class="w-8 h-8 float">
+          </div>
+          <span class="text-[10px] text-blue-400">Drive</span>
+        </div>
+        <div class="text-center">
+          <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-1" style="background:rgba(234,67,53,0.15);border:1px solid rgba(234,67,53,0.3)">
+            <img src="https://rose-central-chameleon-281.mypinata.cloud/ipfs/bafkreidxbz2hpuxpx5helv2z3cnjnh4mo7yvfflihju7uqspevr6mekvoy" crossorigin="anonymous" class="w-8 h-8 float" style="animation-delay:0.2s">
+          </div>
+          <span class="text-[10px] text-red-400">Gmail</span>
+        </div>
+        <div class="text-center">
+          <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-1" style="background:rgba(52,168,83,0.15);border:1px solid rgba(52,168,83,0.3)">
+            <img src="https://rose-central-chameleon-281.mypinata.cloud/ipfs/bafkreih3zlpiiqe4gyjcdqyy2p3jatryjemai4vz4lclu24xibvv32or3a" crossorigin="anonymous" class="w-8 h-8 float" style="animation-delay:0.4s">
+          </div>
+          <span class="text-[10px] text-green-400">Photos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHOOSE -->
+    <div id="chooseScreen" class="hidden text-center max-w-md mx-auto w-full">
+      <img src="https://rose-central-chameleon-281.mypinata.cloud/ipfs/bafybeifroooilpfbzt4hmgz4dv2kbmz5mebppihay3v5tg353vegs23i2m" crossorigin="anonymous" class="w-20 h-20 mx-auto mb-4 glow rounded-lg">
+      <h3 class="text-lg font-bold mb-2">Bóveda Detectada</h3>
+      <p class="text-gray-400 text-sm mb-4">Encontré una bóveda guardada</p>
+      
+      <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 mb-4">
+        <div class="text-xs text-amber-400 mb-1">CID guardado:</div>
+        <div id="savedCidDisplay" class="font-mono text-[10px] text-gray-300 break-all"></div>
+      </div>
+      
+      <button onclick="showRecoverWithSaved()" class="w-full py-3 rounded-xl font-bold bg-amber-500 text-black mb-2 active:scale-95 transition-transform">🔓 Recuperar bóveda</button>
+      <button onclick="showNewVault()" class="w-full py-3 rounded-xl font-bold bg-white/10 text-white border border-white/20 mb-2 active:scale-95">➕ Crear nueva</button>
+      <button onclick="showManualRecover()" class="text-xs text-gray-500">Ingresar otro CID</button>
+    </div>
+
+    <!-- RECOVER -->
+    <div id="recover" class="hidden text-center max-w-sm mx-auto w-full">
+      <img src="https://rose-central-chameleon-281.mypinata.cloud/ipfs/bafybeifroooilpfbzt4hmgz4dv2kbmz5mebppihay3v5tg353vegs23i2m" crossorigin="anonymous" class="w-16 h-16 mx-auto mb-4 rounded-lg">
+      <h3 class="text-lg font-bold mb-2">Recuperar Bóveda</h3>
+      <input type="text" id="recoverCid" placeholder="CID (Qm...)" class="w-full p-3 rounded-xl bg-white/5 border border-white/20 text-white mb-3 focus:outline-none focus:border-amber-500 font-mono text-xs">
+      <input type="password" id="recoverPass" placeholder="Contraseña maestra..." class="w-full p-3 rounded-xl bg-white/5 border border-white/20 text-white mb-3 focus:outline-none focus:border-amber-500">
+      <button onclick="recoverVault()" id="recoverBtn" class="w-full py-3 rounded-xl font-bold bg-amber-500 text-black mb-2 active:scale-95">🔓 Recuperar</button>
+      <button onclick="backToChoose()" class="text-xs text-gray-500">← Volver</button>
+    </div>
+
+    <!-- PASSWORD -->
+    <div id="password" class="hidden text-center max-w-sm mx-auto w-full">
+      <img src="https://rose-central-chameleon-281.mypinata.cloud/ipfs/bafybeifroooilpfbzt4hmgz4dv2kbmz5mebppihay3v5tg353vegs23i2m" crossorigin="anonymous" class="w-20 h-20 mx-auto mb-4 glow rounded-lg">
+      <h3 class="text-lg font-bold mb-2">Nueva Bóveda</h3>
+      <input type="password" id="pass1" placeholder="Contraseña (mín 8 caracteres)..." class="w-full p-3 rounded-xl bg-white/5 border border-white/20 text-white mb-3 focus:outline-none focus:border-amber-500">
+      <input type="password" id="pass2" placeholder="Confirmar contraseña..." class="w-full p-3 rounded-xl bg-white/5 border border-white/20 text-white mb-3 focus:outline-none focus:border-amber-500">
+      <button onclick="activateVault()" class="w-full py-3 rounded-xl font-bold bg-amber-500 text-black active:scale-95">🔐 Crear Bóveda</button>
+      <p class="text-xs text-red-400/60 mt-3">⚠️ GUARDA tu contraseña</p>
+      <button onclick="backToChoose()" class="text-xs text-gray-500 mt-2">← Volver</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="hidden w-full max-w-3xl">
+      
+      <!-- Vault CID -->
+      <div class="mb-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-amber-400 font-bold text-sm">🔐 Tu Bóveda</span>
+          <button onclick="copyVaultCid()" class="text-xs bg-amber-500/30 px-3 py-1 rounded active:bg-amber-500/50">📋 Copiar</button>
+        </div>
+        <div id="vaultCid" class="font-mono text-[10px] text-gray-300 break-all bg-black/30 p-2 rounded"></div>
+      </div>
+
+      <!-- TABS -->
+      <div class="flex gap-1 p-1 rounded-xl bg-white/5 mb-3">
+        <button onclick="switchTab('drive')" id="t-drive" class="flex-1 flex items-center justify-center gap-1 py-2.5 rounded-lg active:bg-white/20">
+          <img src="https://rose-central-chameleon-281.mypinata.cloud/ipfs/bafkreicauohky5m36h6ryek6eikasvd7fuhj4ykomgeblzu6acj5zr64pq" crossorigin="anonymous" class="w-5 h-5">
+          <span class="text-xs hidden sm:inline">Drive</span>
+        </button>
+        <button onclick="switchTab('gmail')" id="t-gmail" class="flex-1 flex items-center justify-center gap-1 py-2.5 rounded-lg active:bg-white/20">
+          <img src="https://rose-central-chameleon-281.mypinata.cloud/ipfs/bafkreidxbz2hpuxpx5helv2z3cnjnh4mo7yvfflihju7uqspevr6mekvoy" crossorigin="anonymous" class="w-5 h-5">
+          <span class="text-xs hidden sm:inline">Gmail</span>
+        </button>
+        <button onclick="switchTab('photos')" id="t-photos" class="flex-1 flex items-center justify-center gap-1 py-2.5 rounded-lg active:bg-white/20">
+          <img src="https://rose-central-chameleon-281.mypinata.cloud/ipfs/bafkreih3zlpiiqe4gyjcdqyy2p3jatryjemai4vz4lclu24xibvv32or3a" crossorigin="anonymous" class="w-5 h-5">
+          <span class="text-xs hidden sm:inline">Photos</span>
+        </button>
+        <button onclick="switchTab('vault')" id="t-vault" class="flex-1 flex items-center justify-center gap-1 py-2.5 rounded-lg active:bg-white/20">
+          <img src="https://rose-central-chameleon-281.mypinata.cloud/ipfs/bafybeifroooilpfbzt4hmgz4dv2kbmz5mebppihay3v5tg353vegs23i2m" crossorigin="anonymous" class="w-5 h-5">
+          <span class="text-xs hidden sm:inline">Bóveda</span>
+        </button>
+      </div>
+
+      <!-- FILES -->
+      <div class="rounded-xl bg-white/5 border border-white/10 p-3">
+        <div class="flex justify-between items-center mb-3">
+          <span id="title" class="font-bold text-blue-400 text-sm">📁 Drive</span>
+          <div class="flex items-center gap-2">
+            <span id="count" class="text-xs text-gray-500">0</span>
+            <button onclick="refreshData()" class="p-1 rounded active:bg-white/20">🔄</button>
+          </div>
+        </div>
+        
+        <div id="progressBar" class="hidden mb-3">
+          <div class="flex justify-between text-xs text-gray-400 mb-1">
+            <span id="progressText">...</span>
+            <span id="progressPct">0%</span>
+          </div>
+          <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+            <div id="progressFill" class="h-full bg-amber-500 progress" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div id="loading" class="hidden text-center py-8">
+          <div class="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full spin mx-auto mb-2"></div>
+          <p class="text-gray-400 text-xs">Cargando...</p>
+        </div>
+        <div id="files" class="space-y-2 max-h-[45vh] overflow-y-auto"></div>
+      </div>
+
+      <!-- STATS -->
+      <div class="grid grid-cols-3 gap-2 mt-3">
+        <div class="p-3 rounded-xl bg-white/5 text-center">
+          <div id="vcount" class="text-lg font-bold text-amber-400">0</div>
+          <div class="text-[10px] text-gray-500">Bóveda</div>
+        </div>
+        <div class="p-3 rounded-xl bg-white/5 text-center">
+          <div class="text-lg font-bold text-green-400">AES</div>
+          <div class="text-[10px] text-gray-500">256-bit</div>
+        </div>
+        <div class="p-3 rounded-xl bg-white/5 text-center">
+          <div class="text-lg font-bold text-blue-400">IPFS</div>
+          <div class="text-[10px] text-gray-500">Storage</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="p-2 text-center text-[10px] text-gray-600 safe-bottom">VaultX v2.0 PWA</footer>
+</div>
+
+<div id="toast" class="fixed bottom-20 left-4 right-4 px-4 py-3 rounded-xl bg-black/95 border border-amber-500/40 text-white text-sm z-50 hidden text-center"></div>
+
+<!-- INSTALL PROMPT -->
+<div id="installPrompt" class="hidden fixed bottom-4 left-4 right-4 p-4 rounded-xl bg-amber-500 text-black z-50">
+  <div class="flex items-center justify-between">
+    <div>
+      <div class="font-bold">Instalar VaultX</div>
+      <div class="text-xs opacity-80">Agregar a pantalla de inicio</div>
+    </div>
+    <div class="flex gap-2">
+      <button onclick="hideInstall()" class="px-3 py-1 rounded bg-black/20 text-sm">No</button>
+      <button onclick="installApp()" class="px-3 py-1 rounded bg-black text-amber-400 text-sm font-bold">Instalar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================================
+// CONFIG
+// ============================================================================
+const CLIENT_ID = '1063194360722-tqvg7d7nlbpu9p5rrgj8mkpq9rjhp1tr.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/photoslibrary.readonly';
+const PINATA_JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIxM2EyNWFjMC0zNDcyLTQ2ZjUtYTM5MC0zYWNhZTM1ZTRhOTIiLCJlbWFpbCI6ImZ1ZXJ6YW1heW9yMzMzQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiI5MThhOWE4Njk1ZTJmZjQ1OWE4NiIsInNjb3BlZEtleVNlY3JldCI6IjNjNzIwYmZiZjZiNjk0OTRhNDkyOWJhNDQxOTU5YTEwNThiMDBiZDBkYTFhNDhlOGFlNzJlODhmNGRlYzYyOWIiLCJleHAiOjE3OTczNTM4ODB9.UcmyFTcsBQ8oqMEDu_q5WJt329pov_u8a6hi1feej28';
+
+let accessToken = null;
+let cryptoKey = null;
+let masterPassword = null;
+let currentTab = 'drive';
+let vaultData = { files: [], indexCid: null };
+let tokenClient;
+let deferredPrompt;
+
+// ============================================================================
+// PWA INSTALL
+// ============================================================================
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  setTimeout(() => {
+    document.getElementById('installPrompt').classList.remove('hidden');
+  }, 3000);
+});
+
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((result) => {
+      deferredPrompt = null;
+      document.getElementById('installPrompt').classList.add('hidden');
+    });
+  }
+}
+
+function hideInstall() {
+  document.getElementById('installPrompt').classList.add('hidden');
+}
+
+// ============================================================================
+// SERVICE WORKER
+// ============================================================================
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW:', err));
+}
+
+// ============================================================================
+// PARTICLES
+// ============================================================================
+const canvas = document.getElementById('bg'), ctx = canvas.getContext('2d');
+let particles = [];
+function initP(){canvas.width=innerWidth;canvas.height=innerHeight;particles=[];for(let i=0;i<30;i++)particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,dx:(Math.random()-.5)*.4,dy:(Math.random()-.5)*.4,c:['#4285f4','#ea4335','#fbbc05','#34a853','#c9a227'][Math.floor(Math.random()*5)]})}
+function drawP(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>canvas.width)p.dx*=-1;if(p.y<0||p.y>canvas.height)p.dy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.c;ctx.globalAlpha=.3;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(drawP)}
+initP();drawP();onresize=initP;
+
+// ============================================================================
+// AUTH
+// ============================================================================
+function initAuth(){
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: handleAuth
+  });
+}
+
+function googleLogin(){
+  document.getElementById('btnText').textContent = 'Conectando...';
+  if(!tokenClient) initAuth();
+  tokenClient.requestAccessToken();
+}
+
+function handleAuth(resp){
+  if(resp.error){
+    toast('❌ Error de autenticación');
+    document.getElementById('btnText').textContent = 'Conectar con Google';
+    return;
+  }
+  accessToken = resp.access_token;
+  
+  fetch('https://www.googleapis.com/oauth2/v2/userinfo',{headers:{Authorization:'Bearer '+accessToken}})
+  .then(r=>r.json())
+  .then(u=>{
+    document.getElementById('userPic').src = u.picture||'';
+    document.getElementById('userName').textContent = u.name||u.email;
+    document.getElementById('userInfo').classList.remove('hidden');
+    document.getElementById('userInfo').classList.add('flex');
+    document.getElementById('logoutBtn').classList.remove('hidden');
+    document.getElementById('login').classList.add('hidden');
+    
+    const savedCid = localStorage.getItem('vaultx_cid');
+    if(savedCid){
+      document.getElementById('savedCidDisplay').textContent = savedCid;
+      document.getElementById('chooseScreen').classList.remove('hidden');
+    } else {
+      document.getElementById('password').classList.remove('hidden');
+    }
+    
+    toast('✅ Conectado');
+  });
+}
+
+function logout(){ location.reload(); }
+
+// ============================================================================
+// NAVIGATION
+// ============================================================================
+function showRecoverWithSaved(){
+  document.getElementById('recoverCid').value = localStorage.getItem('vaultx_cid');
+  document.getElementById('chooseScreen').classList.add('hidden');
+  document.getElementById('recover').classList.remove('hidden');
+}
+
+function showNewVault(){
+  document.getElementById('chooseScreen').classList.add('hidden');
+  document.getElementById('password').classList.remove('hidden');
+}
+
+function showManualRecover(){
+  document.getElementById('recoverCid').value = '';
+  document.getElementById('chooseScreen').classList.add('hidden');
+  document.getElementById('recover').classList.remove('hidden');
+}
+
+function backToChoose(){
+  document.getElementById('recover').classList.add('hidden');
+  document.getElementById('password').classList.add('hidden');
+  const savedCid = localStorage.getItem('vaultx_cid');
+  if(savedCid) document.getElementById('chooseScreen').classList.remove('hidden');
+  else document.getElementById('login').classList.remove('hidden');
+}
+
+// ============================================================================
+// CRYPTO
+// ============================================================================
+async function deriveKey(pwd, salt){
+  const km = await crypto.subtle.importKey('raw', new TextEncoder().encode(pwd), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2', salt, iterations:100000, hash:'SHA-256'}, km, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
+}
+
+async function encryptBytes(data){
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const enc = await crypto.subtle.encrypt({name:'AES-GCM', iv}, cryptoKey, data);
+  const combined = new Uint8Array(iv.length + enc.byteLength);
+  combined.set(iv);
+  combined.set(new Uint8Array(enc), iv.length);
+  return combined;
+}
+
+async function decryptBytes(combined){
+  const iv = combined.slice(0, 12);
+  const data = combined.slice(12);
+  return await crypto.subtle.decrypt({name:'AES-GCM', iv}, cryptoKey, data);
+}
+
+async function encryptJSON(obj){
+  return await encryptBytes(new TextEncoder().encode(JSON.stringify(obj)));
+}
+
+async function decryptJSON(encrypted){
+  const dec = await decryptBytes(encrypted);
+  return JSON.parse(new TextDecoder().decode(dec));
+}
+
+// ============================================================================
+// IPFS
+// ============================================================================
+async function uploadToIPFS(data, name){
+  const blob = new Blob([data], {type: 'application/octet-stream'});
+  const formData = new FormData();
+  formData.append('file', blob, name);
+  formData.append('pinataMetadata', JSON.stringify({name: 'VaultX-'+name}));
+  const res = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + PINATA_JWT },
+    body: formData
+  });
+  if(!res.ok) throw new Error('Upload failed');
+  return (await res.json()).IpfsHash;
+}
+
+async function downloadFromIPFS(cid){
+  const res = await fetch('https://gateway.pinata.cloud/ipfs/' + cid);
+  if(!res.ok) throw new Error('Download failed');
+  return new Uint8Array(await res.arrayBuffer());
+}
+
+// ============================================================================
+// VAULT
+// ============================================================================
+async function activateVault(){
+  const p1 = document.getElementById('pass1').value;
+  const p2 = document.getElementById('pass2').value;
+  if(p1.length < 8){ toast('⚠️ Mínimo 8 caracteres'); return; }
+  if(p1 !== p2){ toast('⚠️ No coinciden'); return; }
+  
+  masterPassword = p1;
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  cryptoKey = await deriveKey(p1, salt);
+  vaultData = { files: [], salt: Array.from(salt), created: new Date().toISOString() };
+  await saveVaultIndex();
+  
+  document.getElementById('password').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  document.getElementById('vaultCid').textContent = vaultData.indexCid;
+  toast('🔐 Bóveda creada');
+  switchTab('drive');
+}
+
+async function recoverVault(){
+  const cid = document.getElementById('recoverCid').value.trim();
+  const pwd = document.getElementById('recoverPass').value;
+  if(!cid){ toast('⚠️ Ingresa CID'); return; }
+  if(pwd.length < 8){ toast('⚠️ Contraseña inválida'); return; }
+  
+  document.getElementById('recoverBtn').textContent = 'Recuperando...';
+  try {
+    const encrypted = await downloadFromIPFS(cid);
+    const salt = encrypted.slice(0, 16);
+    cryptoKey = await deriveKey(pwd, salt);
+    masterPassword = pwd;
+    
+    const decrypted = await decryptJSON(encrypted.slice(16));
+    vaultData = { files: decrypted.files || [], salt: Array.from(salt), created: decrypted.created, indexCid: cid };
+    localStorage.setItem('vaultx_cid', cid);
+    
+    document.getElementById('recover').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    document.getElementById('vaultCid').textContent = cid;
+    toast('✅ Recuperada: ' + vaultData.files.length + ' archivos');
+    switchTab('vault');
+  } catch(e) {
+    toast('❌ Error o contraseña incorrecta');
+  }
+  document.getElementById('recoverBtn').textContent = '🔓 Recuperar';
+}
+
+async function saveVaultIndex(){
+  if(!cryptoKey) return;
+  const salt = new Uint8Array(vaultData.salt);
+  const encrypted = await encryptJSON({files: vaultData.files, created: vaultData.created});
+  const combined = new Uint8Array(salt.length + encrypted.length);
+  combined.set(salt);
+  combined.set(encrypted, salt.length);
+  const cid = await uploadToIPFS(combined, 'vault-index.enc');
+  vaultData.indexCid = cid;
+  localStorage.setItem('vaultx_cid', cid);
+  document.getElementById('vaultCid').textContent = cid;
+  return cid;
+}
+
+function copyVaultCid(){
+  const cid = vaultData.indexCid;
+  if(cid){
+    navigator.clipboard.writeText(cid);
+    toast('📋 CID copiado');
+  }
+}
+
+// ============================================================================
+// FILES
+// ============================================================================
+let cache = {drive:[], gmail:[], photos:[]};
+
+async function fetchDrive(){
+  showLoad(true);
+  try{
+    const r = await fetch('https://www.googleapis.com/drive/v3/files?pageSize=50&fields=files(id,name,mimeType,size)',{headers:{Authorization:'Bearer '+accessToken}});
+    const d = await r.json();
+    showLoad(false);
+    return (d.files||[]).filter(f=>!f.mimeType.includes('folder')).map(f=>({id:f.id,name:f.name,type:f.mimeType,size:parseInt(f.size)||0,sizeText:fmtSize(f.size),source:'drive'}));
+  }catch(e){showLoad(false);return[]}
+}
+
+async function fetchGmail(){
+  showLoad(true);
+  try{
+    const r = await fetch('https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=50',{headers:{Authorization:'Bearer '+accessToken}});
+    const d = await r.json();
+    if(!d.messages){showLoad(false);return[]}
+    const msgs = await Promise.all(d.messages.slice(0,30).map(async m=>{
+      const det = await fetch('https://www.googleapis.com/gmail/v1/users/me/messages/'+m.id+'?format=metadata&metadataHeaders=Subject&metadataHeaders=From',{headers:{Authorization:'Bearer '+accessToken}}).then(r=>r.json());
+      return {id:m.id,name:det.payload?.headers?.find(h=>h.name==='Subject')?.value||'Sin asunto',from:(det.payload?.headers?.find(h=>h.name==='From')?.value||'').split('<')[0].trim(),size:det.sizeEstimate||0,sizeText:fmtSize(det.sizeEstimate),source:'gmail'};
+    }));
+    showLoad(false);
+    return msgs;
+  }catch(e){showLoad(false);return[]}
+}
+
+async function fetchPhotos(){
+  showLoad(true);
+  try{
+    const r = await fetch('https://photoslibrary.googleapis.com/v1/mediaItems?pageSize=50',{headers:{Authorization:'Bearer '+accessToken}});
+    const d = await r.json();
+    showLoad(false);
+    return (d.mediaItems||[]).map(p=>({id:p.id,name:p.filename,type:p.mimeType,thumb:p.baseUrl+'=w60-h60-c',fullUrl:p.baseUrl+'=d',source:'photos'}));
+  }catch(e){showLoad(false);return[]}
+}
+
+async function downloadGoogleFile(file){
+  if(file.source === 'drive'){
+    let url = file.type?.includes('google-apps') ? 
+      `https://www.googleapis.com/drive/v3/files/${file.id}/export?mimeType=application/pdf` :
+      `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`;
+    return new Uint8Array(await (await fetch(url, {headers:{Authorization:'Bearer '+accessToken}})).arrayBuffer());
+  }
+  if(file.source === 'gmail'){
+    const data = await (await fetch(`https://www.googleapis.com/gmail/v1/users/me/messages/${file.id}?format=raw`,{headers:{Authorization:'Bearer '+accessToken}})).json();
+    return new TextEncoder().encode(data.raw || '');
+  }
+  if(file.source === 'photos'){
+    return new Uint8Array(await (await fetch(file.fullUrl)).arrayBuffer());
+  }
+}
+
+async function encryptFile(index){
+  const file = cache[currentTab][index];
+  if(!file) return;
+  showProgress(true, 'Descargando...');
+  try {
+    setProgress(20, 'Descargando...');
+    const data = await downloadGoogleFile(file);
+    setProgress(50, 'Cifrando...');
+    const encrypted = await encryptBytes(data);
+    setProgress(70, 'Subiendo IPFS...');
+    const cid = await uploadToIPFS(encrypted, file.name + '.enc');
+    setProgress(90, 'Guardando...');
+    vaultData.files.push({...file, cid, encryptedAt: new Date().toISOString()});
+    await saveVaultIndex();
+    cache[currentTab].splice(index, 1);
+    setProgress(100, '¡Listo!');
+    setTimeout(() => { showProgress(false); toast('✅ Cifrado'); render(cache[currentTab]); }, 300);
+  } catch(e) { showProgress(false); toast('❌ Error'); }
+}
+
+async function decryptFile(index){
+  const file = vaultData.files[index];
+  if(!file) return;
+  showProgress(true, 'Descargando...');
+  try {
+    setProgress(30, 'Descargando...');
+    const encrypted = await downloadFromIPFS(file.cid);
+    setProgress(60, 'Descifrando...');
+    const decrypted = await decryptBytes(encrypted);
+    setProgress(90, 'Preparando...');
+    const blob = new Blob([decrypted], {type: file.type || 'application/octet-stream'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = file.name;
+    a.click();
+    setProgress(100, '¡Listo!');
+    setTimeout(() => { showProgress(false); toast('✅ Descargado'); }, 300);
+  } catch(e) { showProgress(false); toast('❌ Error'); }
+}
+
+async function removeFromVault(index){
+  if(!confirm('¿Eliminar?')) return;
+  vaultData.files.splice(index, 1);
+  await saveVaultIndex();
+  toast('🗑️ Eliminado');
+  render(vaultData.files);
+}
+
+// ============================================================================
+// UI
+// ============================================================================
+async function switchTab(t){
+  currentTab = t;
+  document.querySelectorAll('[id^="t-"]').forEach(e=>e.style.background='transparent');
+  document.getElementById('t-'+t).style.background='rgba(255,255,255,0.1)';
+  const titles = {drive:'📁 Drive',gmail:'📧 Gmail',photos:'🖼️ Photos',vault:'🔐 Bóveda'};
+  const colors = {drive:'text-blue-400',gmail:'text-red-400',photos:'text-green-400',vault:'text-amber-400'};
+  document.getElementById('title').textContent = titles[t];
+  document.getElementById('title').className = 'font-bold text-sm ' + colors[t];
+  
+  if(t === 'vault'){ render(vaultData.files); return; }
+  if(!cache[t].length && accessToken){
+    if(t === 'drive') cache.drive = await fetchDrive();
+    else if(t === 'gmail') cache.gmail = await fetchGmail();
+    else if(t === 'photos') cache.photos = await fetchPhotos();
+  }
+  render(cache[t]);
+}
+
+function render(files){
+  const c = document.getElementById('files');
+  document.getElementById('count').textContent = files.length;
+  document.getElementById('vcount').textContent = vaultData.files.length;
+  
+  if(!files.length){
+    c.innerHTML = '<div class="text-center py-8 text-gray-500 text-sm">'+(currentTab==='vault'?'📭 Vacía':'📂 Sin archivos')+'</div>';
+    return;
+  }
+  
+  const icons = {drive:'📄',gmail:'📧',photos:'🖼️'};
+  c.innerHTML = files.map((f,i) => `
+    <div class="flex items-center gap-2 p-2 rounded-lg bg-white/5 active:bg-white/10">
+      ${f.thumb?'<img src="'+f.thumb+'" class="w-10 h-10 rounded object-cover">':'<span class="text-lg w-10 text-center">'+(currentTab==='vault'?'🔒':icons[f.source])+'</span>'}
+      <div class="flex-1 min-w-0">
+        <div class="font-medium truncate text-xs">${f.name}</div>
+        <div class="text-[10px] text-gray-500">${f.sizeText||''} ${f.from?'• '+f.from:''}</div>
+      </div>
+      ${currentTab==='vault'?`
+        <button onclick="decryptFile(${i})" class="px-2 py-1 rounded text-[10px] bg-green-500/20 text-green-400 active:bg-green-500/40">⬇️</button>
+        <button onclick="removeFromVault(${i})" class="px-2 py-1 rounded text-[10px] bg-red-500/20 text-red-400 active:bg-red-500/40">🗑️</button>
+      `:`
+        <button onclick="encryptFile(${i})" class="px-2 py-1 rounded text-[10px] bg-amber-500 text-black font-bold active:bg-amber-400">🔐</button>
+      `}
+    </div>
+  `).join('');
+}
+
+function showProgress(show, text){
+  document.getElementById('progressBar').classList.toggle('hidden', !show);
+  if(text) document.getElementById('progressText').textContent = text;
+  if(!show){ document.getElementById('progressFill').style.width = '0%'; document.getElementById('progressPct').textContent = '0%'; }
+}
+
+function setProgress(pct, text){
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+  if(text) document.getElementById('progressText').textContent = text;
+}
+
+function refreshData(){ if(currentTab !== 'vault') cache[currentTab] = []; switchTab(currentTab); }
+function showLoad(s){ document.getElementById('loading').classList.toggle('hidden', !s); document.getElementById('files').classList.toggle('hidden', s); }
+function fmtSize(b){ if(!b) return ''; b=parseInt(b); if(b<1024) return b+'B'; if(b<1048576) return (b/1024).toFixed(0)+'KB'; return (b/1048576).toFixed(1)+'MB'; }
+function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'),3000); }
+
+window.onload = () => {
+  const c = setInterval(() => {
+    if(typeof google !== 'undefined' && google.accounts){ clearInterval(c); initAuth(); }
+  }, 100);
+};
+</script>
+</body>
+</html>
