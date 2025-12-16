@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎅 SANTA HOOD - El Ladrón de los Ricos 🎅</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  overflow: hidden;
+  background: #000;
+  font-family: 'Bangers', cursive;
+}
+
+canvas {
+  display: block;
+}
+
+/* Pantalla de título */
+#title-screen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(180deg, #0a0a1a 0%, #1a0a2a 50%, #0a0a1a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 1000;
+  text-align: center;
+}
+
+#title-screen h1 {
+  font-size: 64px;
+  color: #ff0000;
+  text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000, 4px 4px 0 #000;
+  margin-bottom: 10px;
+  animation: titlePulse 1s infinite;
+}
+
+@keyframes titlePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+#title-screen h2 {
+  font-size: 32px;
+  color: #ffd700;
+  text-shadow: 0 0 10px #ffd700;
+  margin-bottom: 40px;
+}
+
+#title-screen .subtitle {
+  font-family: 'Orbitron', monospace;
+  font-size: 18px;
+  color: #0ff;
+  margin-bottom: 50px;
+  letter-spacing: 3px;
+}
+
+#play-btn {
+  padding: 20px 60px;
+  font-size: 28px;
+  font-family: 'Bangers', cursive;
+  background: linear-gradient(135deg, #ff0000, #aa0000);
+  border: 4px solid #ffd700;
+  border-radius: 50px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(255,0,0,0.5);
+  transition: all 0.3s;
+  letter-spacing: 2px;
+}
+
+#play-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 50px rgba(255,0,0,0.8);
+}
+
+#title-screen .santa-preview {
+  font-size: 100px;
+  margin-bottom: 20px;
+  animation: float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+/* Subtítulos */
+#subtitles {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.8);
+  padding: 15px 40px;
+  border-radius: 10px;
+  z-index: 100;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+#subtitles.show {
+  opacity: 1;
+}
+
+#subtitles p {
+  font-family: 'Orbitron', monospace;
+  font-size: 22px;
+  color: #fff;
+  text-shadow: 0 0 10px #0ff;
+}
+
+/* Barra de progreso */
+#progress-bar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 600px;
+  height: 8px;
+  background: #333;
+  border-radius: 4px;
+  z-index: 100;
+  overflow: hidden;
+}
+
+#progress-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #ff0000, #ffd700);
+  transition: width 0.1s;
+}
+
+/* Pantalla final */
+#end-screen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: radial-gradient(circle, #1a0a2a 0%, #000 100%);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 1000;
+  text-align: center;
+}
+
+#end-screen.show {
+  display: flex;
+  animation: fadeIn 2s forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+#end-screen h1 {
+  font-size: 48px;
+  color: #ffd700;
+  text-shadow: 0 0 30px #ffd700;
+  margin-bottom: 20px;
+}
+
+#end-screen p {
+  font-size: 24px;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+#end-screen .message {
+  font-family: 'Orbitron', monospace;
+  font-size: 18px;
+  color: #0ff;
+  margin-top: 30px;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+#end-screen .credits {
+  margin-top: 40px;
+  font-size: 16px;
+  color: #888;
+}
+
+/* Botón sonido */
+#sound-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.7);
+  border: 2px solid #ffd700;
+  color: #ffd700;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 500;
+}
+</style>
+</head>
+<body>
+
+<!-- PANTALLA DE TÍTULO -->
+<div id="title-screen">
+  <div class="santa-preview">🎅</div>
+  <h1>SANTA HOOD</h1>
+  <h2>El Ladrón de los Ricos</h2>
+  <div class="subtitle">UNA HISTORIA DE NAVIDAD DIFERENTE</div>
+  <button id="play-btn">▶ VER CORTOMETRAJE</button>
+</div>
+
+<!-- BOTÓN SONIDO -->
+<button id="sound-btn">🔊</button>
+
+<!-- SUBTÍTULOS -->
+<div id="subtitles">
+  <p id="subtitle-text"></p>
+</div>
+
+<!-- BARRA DE PROGRESO -->
+<div id="progress-bar">
+  <div id="progress-fill"></div>
+</div>
+
+<!-- PANTALLA FINAL -->
+<div id="end-screen">
+  <h1>🎅 FIN 🎅</h1>
+  <p>"La verdadera magia de la Navidad..."</p>
+  <p>"...es compartir con quien más lo necesita"</p>
+  <div class="message">
+    En esta Navidad, recuerda que un pequeño acto de generosidad 
+    puede cambiar la vida de alguien para siempre.
+  </div>
+  <div class="credits">
+    Una producción de BM CENTER 🏁<br>
+    Creado con ❤️ y código
+  </div>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+let width = canvas.width = window.innerWidth;
+let height = canvas.height = window.innerHeight;
+
+let isPlaying = false;
+let currentTime = 0;
+let totalDuration = 60000; // 60 segundos
+let currentScene = 0;
+
+// Audio
+let audioCtx = null;
+let soundEnabled = true;
+
+function initAudio() {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+function playTone(freq, duration, type = 'sine', volume = 0.1) {
+  if (!audioCtx || !soundEnabled) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function playJingle() {
+  const notes = [523, 587, 659, 698, 784, 698, 659, 587, 523];
+  notes.forEach((note, i) => {
+    setTimeout(() => playTone(note, 0.3, 'triangle', 0.15), i * 200);
+  });
+}
+
+function playCashSound() {
+  playTone(800, 0.1, 'square', 0.1);
+  setTimeout(() => playTone(1000, 0.1, 'square', 0.1), 100);
+  setTimeout(() => playTone(1200, 0.15, 'square', 0.1), 200);
+}
+
+function playHoHoHo() {
+  playTone(150, 0.3, 'sawtooth', 0.2);
+  setTimeout(() => playTone(130, 0.3, 'sawtooth', 0.2), 400);
+  setTimeout(() => playTone(110, 0.4, 'sawtooth', 0.2), 800);
+}
+
+document.getElementById('sound-btn').addEventListener('click', () => {
+  soundEnabled = !soundEnabled;
+  document.getElementById('sound-btn').textContent = soundEnabled ? '🔊' : '🔇';
+});
+
+// Ciudad
+const buildings = [];
+const stars = [];
+const snowflakes = [];
+const moneyParticles = [];
+
+class Building {
+  constructor(x, w, h, type) {
+    this.x = x;
+    this.width = w;
+    this.height = h;
+    this.type = type; // 'rich' o 'poor'
+    this.windows = [];
+    this.generateWindows();
+  }
+  
+  generateWindows() {
+    const cols = Math.floor(this.width / 30);
+    const rows = Math.floor(this.height / 40);
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        this.windows.push({
+          x: this.x + 15 + c * 30,
+          y: height - this.height + 20 + r * 40,
+          lit: Math.random() > 0.3,
+          flicker: Math.random()
+        });
+      }
+    }
+  }
+  
+  draw() {
+    // Edificio
+    const gradient = ctx.createLinearGradient(this.x, height - this.height, this.x, height);
+    if (this.type === 'rich') {
+      gradient.addColorStop(0, '#2a3a5a');
+      gradient.addColorStop(1, '#1a2a3a');
+    } else {
+      gradient.addColorStop(0, '#3a2a2a');
+      gradient.addColorStop(1, '#2a1a1a');
+    }
+    
+    ctx.fillStyle = gradient;
+    ctx.fillRect(this.x, height - this.height, this.width, this.height);
+    
+    // Borde
+    ctx.strokeStyle = this.type === 'rich' ? '#4a6a9a' : '#5a3a3a';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(this.x, height - this.height, this.width, this.height);
+    
+    // Ventanas
+    this.windows.forEach(w => {
+      if (w.lit && Math.sin(currentTime / 500 + w.flicker * 10) > -0.8) {
+        ctx.fillStyle = this.type === 'rich' ? '#ffd700' : '#ff9933';
+        ctx.shadowColor = this.type === 'rich' ? '#ffd700' : '#ff6600';
+        ctx.shadowBlur = 10;
+      } else {
+        ctx.fillStyle = '#111';
+        ctx.shadowBlur = 0;
+      }
+      ctx.fillRect(w.x, w.y, 20, 25);
+      ctx.shadowBlur = 0;
+    });
+    
+    // Letrero para edificios ricos
+    if (this.type === 'rich' && this.height > 300) {
+      ctx.fillStyle = '#ff0000';
+      ctx.shadowColor = '#ff0000';
+      ctx.shadowBlur = 20;
+      ctx.font = 'bold 16px Orbitron';
+      ctx.fillText('$$$', this.x + this.width/2 - 20, height - this.height + 50);
+      ctx.shadowBlur = 0;
+    }
+  }
+}
+
+class Star {
+  constructor() {
+    this.x = Math.random() * width;
+    this.y = Math.random() * height * 0.4;
+    this.size = Math.random() * 2 + 1;
+    this.twinkle = Math.random() * Math.PI * 2;
+  }
+  
+  draw() {
+    const brightness = 0.5 + Math.sin(currentTime / 200 + this.twinkle) * 0.5;
+    ctx.fillStyle = `rgba(255, 255, 255, ${brightness})`;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+class Snowflake {
+  constructor() {
+    this.reset();
+  }
+  
+  reset() {
+    this.x = Math.random() * width;
+    this.y = -10;
+    this.size = Math.random() * 4 + 2;
+    this.speed = Math.random() * 2 + 1;
+    this.wobble = Math.random() * Math.PI * 2;
+  }
+  
+  update() {
+    this.y += this.speed;
+    this.x += Math.sin(currentTime / 500 + this.wobble) * 0.5;
+    if (this.y > height) this.reset();
+  }
+  
+  draw() {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+class MoneyParticle {
+  constructor(x, y, targetX, targetY) {
+    this.x = x;
+    this.y = y;
+    this.targetX = targetX;
+    this.targetY = targetY;
+    this.progress = 0;
+    this.startX = x;
+    this.startY = y;
+  }
+  
+  update() {
+    this.progress += 0.02;
+    this.x = this.startX + (this.targetX - this.startX) * this.progress;
+    this.y = this.startY + (this.targetY - this.startY) * this.progress - Math.sin(this.progress * Math.PI) * 100;
+    return this.progress < 1;
+  }
+  
+  draw() {
+    ctx.font = '24px Arial';
+    ctx.fillText('💵', this.x, this.y);
+  }
+}
+
+// Santa
+const santa = {
+  x: -100,
+  y: 200,
+  targetX: -100,
+  targetY: 200,
+  bagSize: 0,
+  state: 'flying', // flying, stealing, giving
+  sleighAngle: 0
+};
+
+function drawSanta() {
+  const { x, y, bagSize, sleighAngle } = santa;
+  
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(sleighAngle);
+  
+  // Trineo
+  ctx.fillStyle = '#8B4513';
+  ctx.beginPath();
+  ctx.moveTo(-40, 20);
+  ctx.quadraticCurveTo(0, 40, 40, 20);
+  ctx.lineTo(50, 10);
+  ctx.lineTo(-50, 10);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#ffd700';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  
+  // Patines del trineo
+  ctx.strokeStyle = '#ffd700';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(-50, 25);
+  ctx.quadraticCurveTo(-60, 30, -55, 35);
+  ctx.moveTo(50, 25);
+  ctx.quadraticCurveTo(60, 30, 55, 35);
+  ctx.stroke();
+  
+  // Renos (simplificados)
+  ctx.fillStyle = '#8B4513';
+  for (let i = 0; i < 2; i++) {
+    const rx = -80 - i * 40;
+    const ry = -10 + Math.sin(currentTime / 100 + i) * 5;
+    
+    // Cuerpo reno
+    ctx.beginPath();
+    ctx.ellipse(rx, ry, 20, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Cabeza
+    ctx.beginPath();
+    ctx.arc(rx - 20, ry - 5, 8, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Cuernos
+    ctx.strokeStyle = '#654321';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(rx - 18, ry - 12);
+    ctx.lineTo(rx - 22, ry - 25);
+    ctx.moveTo(rx - 22, ry - 12);
+    ctx.lineTo(rx - 28, ry - 22);
+    ctx.stroke();
+    
+    // Nariz roja (Rudolf)
+    if (i === 0) {
+      ctx.fillStyle = '#ff0000';
+      ctx.shadowColor = '#ff0000';
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.arc(rx - 28, ry - 5, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+    
+    // Riendas
+    ctx.strokeStyle = '#8B0000';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(-50, 0);
+    ctx.lineTo(rx, ry);
+    ctx.stroke();
+  }
+  
+  // Santa
+  // Cuerpo
+  ctx.fillStyle = '#ff0000';
+  ctx.beginPath();
+  ctx.ellipse(0, -10, 25, 30, 0, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Cinturón
+  ctx.fillStyle = '#000';
+  ctx.fillRect(-25, -5, 50, 8);
+  ctx.fillStyle = '#ffd700';
+  ctx.fillRect(-8, -7, 16, 12);
+  
+  // Cabeza
+  ctx.fillStyle = '#ffdbac';
+  ctx.beginPath();
+  ctx.arc(0, -45, 18, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Barba
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.moveTo(-15, -40);
+  ctx.quadraticCurveTo(-20, -20, 0, -15);
+  ctx.quadraticCurveTo(20, -20, 15, -40);
+  ctx.fill();
+  
+  // Gorro
+  ctx.fillStyle = '#ff0000';
+  ctx.beginPath();
+  ctx.moveTo(-18, -50);
+  ctx.quadraticCurveTo(0, -80, 25, -55);
+  ctx.lineTo(18, -50);
+  ctx.closePath();
+  ctx.fill();
+  
+  // Pompón
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.arc(25, -55, 8, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Ojos
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.arc(-6, -48, 3, 0, Math.PI * 2);
+  ctx.arc(6, -48, 3, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Mejillas rosadas
+  ctx.fillStyle = 'rgba(255, 150, 150, 0.5)';
+  ctx.beginPath();
+  ctx.arc(-12, -40, 5, 0, Math.PI * 2);
+  ctx.arc(12, -40, 5, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Saco de dinero
+  if (bagSize > 0) {
+    const bs = 20 + bagSize * 30;
+    ctx.fillStyle = '#8B4513';
+    ctx.beginPath();
+    ctx.ellipse(35, -10, bs * 0.5, bs * 0.6, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#654321';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Símbolo $
+    ctx.fillStyle = '#ffd700';
+    ctx.font = `bold ${bs * 0.5}px Arial`;
+    ctx.fillText('$', 25, -5);
+  }
+  
+  ctx.restore();
+}
+
+// Personajes pobres
+const poorPeople = [];
+
+class PoorPerson {
+  constructor(x) {
+    this.x = x;
+    this.y = height - 60;
+    this.hasGift = false;
+    this.happiness = 0;
+    this.type = Math.floor(Math.random() * 3); // diferentes personajes
+  }
+  
+  draw() {
+    const { x, y, hasGift, happiness, type } = this;
+    
+    // Cuerpo
+    ctx.fillStyle = type === 0 ? '#555' : type === 1 ? '#666' : '#444';
+    ctx.beginPath();
+    ctx.ellipse(x, y, 15, 25, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Cabeza
+    ctx.fillStyle = '#deb887';
+    ctx.beginPath();
+    ctx.arc(x, y - 35, 12, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Expresión
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(x - 4, y - 38, 2, 0, Math.PI * 2);
+    ctx.arc(x + 4, y - 38, 2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Sonrisa o tristeza
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (happiness > 0) {
+      ctx.arc(x, y - 30, 5, 0, Math.PI);
+    } else {
+      ctx.arc(x, y - 28, 5, Math.PI, Math.PI * 2);
+    }
+    ctx.stroke();
+    
+    // Brazos levantados si está feliz
+    if (happiness > 0) {
+      ctx.strokeStyle = '#deb887';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(x - 15, y - 10);
+      ctx.lineTo(x - 25, y - 30 - Math.sin(currentTime / 100) * 10);
+      ctx.moveTo(x + 15, y - 10);
+      ctx.lineTo(x + 25, y - 30 - Math.sin(currentTime / 100 + 1) * 10);
+      ctx.stroke();
+    }
+    
+    // Regalo/dinero recibido
+    if (hasGift) {
+      ctx.font = '20px Arial';
+      ctx.fillText('💵', x - 10, y + 10);
+      
+      // Corazones de felicidad
+      if (happiness > 0.5) {
+        ctx.fillStyle = '#ff0000';
+        ctx.font = '16px Arial';
+        ctx.fillText('❤️', x + 15, y - 50 - Math.sin(currentTime / 200) * 10);
+      }
+    }
+  }
+}
+
+// Inicializar escena
+function initScene() {
+  buildings.length = 0;
+  stars.length = 0;
+  snowflakes.length = 0;
+  poorPeople.length = 0;
+  
+  // Estrellas
+  for (let i = 0; i < 100; i++) {
+    stars.push(new Star());
+  }
+  
+  // Copos de nieve
+  for (let i = 0; i < 100; i++) {
+    const s = new Snowflake();
+    s.y = Math.random() * height;
+    snowflakes.push(s);
+  }
+  
+  // Edificios ricos (izquierda)
+  buildings.push(new Building(50, 100, 400, 'rich'));
+  buildings.push(new Building(170, 80, 350, 'rich'));
+  buildings.push(new Building(270, 120, 450, 'rich'));
+  
+  // Edificios pobres (derecha)
+  buildings.push(new Building(width - 350, 70, 200, 'poor'));
+  buildings.push(new Building(width - 260, 90, 180, 'poor'));
+  buildings.push(new Building(width - 150, 80, 220, 'poor'));
+  
+  // Personas pobres
+  poorPeople.push(new PoorPerson(width - 320));
+  poorPeople.push(new PoorPerson(width - 220));
+  poorPeople.push(new PoorPerson(width - 120));
+}
+
+// Escenas del cortometraje
+const scenes = [
+  {
+    start: 0,
+    end: 5000,
+    subtitle: "En una ciudad dividida por la riqueza...",
+    action: (t) => {
+      santa.x = -100;
+      santa.y = 200;
+    }
+  },
+  {
+    start: 5000,
+    end: 10000,
+    subtitle: "Los ricos acumulaban fortunas en sus torres de cristal...",
+    action: (t) => {
+      // Panorámica
+    }
+  },
+  {
+    start: 10000,
+    end: 15000,
+    subtitle: "Mientras los pobres apenas sobrevivían...",
+    action: (t) => {
+      // Mostrar lado pobre
+    }
+  },
+  {
+    start: 15000,
+    end: 20000,
+    subtitle: "Pero en Nochebuena... llegó alguien especial 🎅",
+    action: (t) => {
+      const progress = (t - 15000) / 5000;
+      santa.x = -100 + progress * 300;
+      santa.y = 150 + Math.sin(progress * Math.PI * 2) * 30;
+      santa.sleighAngle = Math.sin(progress * Math.PI * 4) * 0.1;
+      if (t === 15000) playJingle();
+    }
+  },
+  {
+    start: 20000,
+    end: 28000,
+    subtitle: "Santa Hood visitó las mansiones de los millonarios... 💰",
+    action: (t) => {
+      const progress = (t - 20000) / 8000;
+      santa.x = 200 + Math.sin(progress * Math.PI) * 100;
+      santa.y = 100 + progress * 150;
+      santa.bagSize = Math.min(progress * 2, 1);
+      santa.sleighAngle = Math.sin(t / 200) * 0.05;
+      
+      if (Math.random() > 0.95) {
+        moneyParticles.push(new MoneyParticle(
+          150 + Math.random() * 200,
+          200 + Math.random() * 100,
+          santa.x + 30,
+          santa.y
+        ));
+        if (Math.random() > 0.7) playCashSound();
+      }
+    }
+  },
+  {
+    start: 28000,
+    end: 32000,
+    subtitle: '"¡JO JO JO! Los ricos no necesitan tanto..." 🎅',
+    action: (t) => {
+      santa.x = 250;
+      santa.y = 250;
+      santa.bagSize = 1;
+      if (t === 28000) playHoHoHo();
+    }
+  },
+  {
+    start: 32000,
+    end: 42000,
+    subtitle: "Y voló hacia el barrio de los necesitados... ✨",
+    action: (t) => {
+      const progress = (t - 32000) / 10000;
+      santa.x = 250 + progress * (width - 500);
+      santa.y = 150 + Math.sin(progress * Math.PI * 3) * 50;
+      santa.sleighAngle = Math.sin(t / 150) * 0.08;
+    }
+  },
+  {
+    start: 42000,
+    end: 52000,
+    subtitle: "Repartiendo la riqueza entre quienes más la necesitaban 💝",
+    action: (t) => {
+      const progress = (t - 42000) / 10000;
+      santa.x = width - 250;
+      santa.y = 120 + Math.sin(t / 300) * 20;
+      santa.bagSize = Math.max(1 - progress, 0);
+      
+      poorPeople.forEach((p, i) => {
+        const giveTime = 42000 + i * 3000;
+        if (t > giveTime && !p.hasGift) {
+          p.hasGift = true;
+          p.happiness = 1;
+          playCashSound();
+        }
+      });
+    }
+  },
+  {
+    start: 52000,
+    end: 58000,
+    subtitle: '"La verdadera magia está en compartir" 🌟',
+    action: (t) => {
+      const progress = (t - 52000) / 6000;
+      santa.x = width - 250 + progress * 400;
+      santa.y = 120 - progress * 150;
+      santa.bagSize = 0;
+      if (t === 52000) playJingle();
+    }
+  },
+  {
+    start: 58000,
+    end: 62000,
+    subtitle: "¡Feliz Navidad! 🎄",
+    action: (t) => {
+      santa.x = width + 200;
+    }
+  }
+];
+
+// Mostrar subtítulo
+function showSubtitle(text) {
+  const subtitleEl = document.getElementById('subtitles');
+  const textEl = document.getElementById('subtitle-text');
+  
+  if (text) {
+    textEl.textContent = text;
+    subtitleEl.classList.add('show');
+  } else {
+    subtitleEl.classList.remove('show');
+  }
+}
+
+// Dibujar escena
+function drawScene() {
+  // Cielo nocturno
+  const skyGradient = ctx.createLinearGradient(0, 0, 0, height);
+  skyGradient.addColorStop(0, '#0a0a2a');
+  skyGradient.addColorStop(0.5, '#1a1a3a');
+  skyGradient.addColorStop(1, '#2a2a4a');
+  ctx.fillStyle = skyGradient;
+  ctx.fillRect(0, 0, width, height);
+  
+  // Luna
+  ctx.fillStyle = '#ffffcc';
+  ctx.shadowColor = '#ffffcc';
+  ctx.shadowBlur = 30;
+  ctx.beginPath();
+  ctx.arc(width - 100, 80, 40, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  
+  // Estrellas
+  stars.forEach(s => s.draw());
+  
+  // Edificios
+  buildings.forEach(b => b.draw());
+  
+  // Suelo
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(0, height - 40, width, 40);
+  
+  // Nieve en el suelo
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, height - 45, width, 5);
+  
+  // Personas pobres
+  poorPeople.forEach(p => p.draw());
+  
+  // Partículas de dinero
+  for (let i = moneyParticles.length - 1; i >= 0; i--) {
+    if (!moneyParticles[i].update()) {
+      moneyParticles.splice(i, 1);
+    } else {
+      moneyParticles[i].draw();
+    }
+  }
+  
+  // Copos de nieve
+  snowflakes.forEach(s => {
+    s.update();
+    s.draw();
+  });
+  
+  // Santa
+  drawSanta();
+}
+
+// Loop principal
+function animate(timestamp) {
+  if (!isPlaying) return;
+  
+  currentTime += 16.67; // ~60fps
+  
+  // Encontrar escena actual
+  const scene = scenes.find(s => currentTime >= s.start && currentTime < s.end);
+  if (scene) {
+    showSubtitle(scene.subtitle);
+    scene.action(currentTime);
+  }
+  
+  // Actualizar barra de progreso
+  const progress = Math.min(currentTime / totalDuration * 100, 100);
+  document.getElementById('progress-fill').style.width = progress + '%';
+  
+  // Dibujar
+  drawScene();
+  
+  // Fin del cortometraje
+  if (currentTime >= totalDuration) {
+    showSubtitle('');
+    document.getElementById('end-screen').classList.add('show');
+    return;
+  }
+  
+  requestAnimationFrame(animate);
+}
+
+// Iniciar
+document.getElementById('play-btn').addEventListener('click', () => {
+  document.getElementById('title-screen').style.display = 'none';
+  initAudio();
+  initScene();
+  isPlaying = true;
+  playJingle();
+  requestAnimationFrame(animate);
+});
+
+// Resize
+window.addEventListener('resize', () => {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+  if (isPlaying) initScene();
+});
+</script>
+</body>
+</html>
